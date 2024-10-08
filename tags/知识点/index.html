@@ -211,5 +211,19 @@
 
 <!-- utterances Comments -->
 
+    
+    
+      <script src="https://unpkg.com/mermaid@8.14.0/dist/mermaid.min.js"></script>
+      <script>
+        console.log('Mermaid script loaded');
+        if (window.mermaid) {
+          console.log('Mermaid object found');
+          mermaid.initialize({&#34;theme&#34;:&#34;default&#34;,&#34;logLevel&#34;:&#34;fatal&#34;,&#34;flowchart&#34;:{&#34;htmlLabels&#34;:true,&#34;curve&#34;:&#34;linear&#34;},&#34;sequence&#34;:{&#34;diagramMarginX&#34;:50,&#34;diagramMarginY&#34;:10,&#34;actorMargin&#34;:50,&#34;width&#34;:150,&#34;height&#34;:65,&#34;boxMargin&#34;:10,&#34;boxTextMargin&#34;:5,&#34;noteMargin&#34;:10,&#34;messageMargin&#34;:35}});
+          console.log('Mermaid initialized');
+        } else {
+          console.log('Mermaid object not found');
+        }
+      </script>
+    
 </body>
 </html>

@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="由 Gemini 1.5 Pro 002 协助生成。 基于中断处理的模型推理与代码计算结合的数学求解系统 1. 项目背景 在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程,将推理中的计算任务交给实际的代码执行">
+    <meta name="description" content="由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。 基于中断处理的模型推理与代码计算结合的数学求解系统 1. 项目背景 在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于调度员的数学问题求解系统">
 <meta property="og:url" content="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="leezhuuuuu&#39;s blog">
-<meta property="og:description" content="由 Gemini 1.5 Pro 002 协助生成。 基于中断处理的模型推理与代码计算结合的数学求解系统 1. 项目背景 在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程,将推理中的计算任务交给实际的代码执行">
+<meta property="og:description" content="由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。 基于中断处理的模型推理与代码计算结合的数学求解系统 1. 项目背景 在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-10-08T04:39:50.000Z">
-<meta property="article:modified_time" content="2024-10-08T04:55:08.330Z">
+<meta property="article:modified_time" content="2024-10-08T04:57:43.945Z">
 <meta property="article:author" content="leezhuuuuu">
 <meta property="article:tag" content="经验技术">
 <meta property="article:tag" content="NLP">
@@ -167,7 +167,7 @@
   
 
   <div class="content e-content" itemprop="articleBody">
-    <p>由 Gemini 1.5 Pro 002 协助生成。</p>
+    <p>由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。</p>
 <h2 id="基于中断处理的模型推理与代码计算结合的数学求解系统">基于中断处理的模型推理与代码计算结合的数学求解系统</h2>
 <h3 id="1-项目背景">1. 项目背景</h3>
 <p>在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程,将推理中的计算任务交给实际的代码执行模块来处理,并返回计算结果与推理过程整合,从而实现对复杂数学问题的逐步解决。</p>

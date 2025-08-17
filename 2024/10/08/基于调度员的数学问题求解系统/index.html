@@ -1,260 +1,39 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"leezhuuuuu.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。 基于中断处理的模型推理与代码计算结合的数学求解系统 1. 项目背景 在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程">
-<meta property="og:type" content="article">
-<meta property="og:title" content="基于调度员的数学问题求解系统">
-<meta property="og:url" content="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/index.html">
-<meta property="og:site_name" content="leezhuuuuu&#39;s blog">
-<meta property="og:description" content="由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。 基于中断处理的模型推理与代码计算结合的数学求解系统 1. 项目背景 在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-10-08T04:39:50.000Z">
-<meta property="article:modified_time" content="2025-04-15T03:36:07.860Z">
-<meta property="article:author" content="leezhuuuuu">
-<meta property="article:tag" content="经验技术">
-<meta property="article:tag" content="NLP">
-<meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/","path":"2024/10/08/基于调度员的数学问题求解系统/","title":"基于调度员的数学问题求解系统"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>基于调度员的数学问题求解系统 | leezhuuuuu's blog</title>
-  
-
-
-
-
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  
-
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">leezhuuuuu's blog</p>
-      <i class="logo-line"></i>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-  </ul>
-</nav>
-
-
-
-
-</header>
-        
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">基于中断处理的模型推理与代码计算结合的数学求解系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">1. 项目背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E6%A0%87"><span class="nav-number">1.2.</span> <span class="nav-text">2. 项目目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">3. 系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%85%B3%E9%94%AE%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">1.4.</span> <span class="nav-text">4. 关键设计思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-%E6%A0%87%E8%AE%B0%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">4.1 标记机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-%E4%B8%AD%E6%96%AD%E4%B8%8E%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.2.</span> <span class="nav-text">4.2 中断与调度机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E4%B8%8E%E7%BB%93%E6%9E%9C%E6%95%B4%E5%90%88"><span class="nav-number">1.4.3.</span> <span class="nav-text">4.3 代码执行与结果整合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-4-%E8%BF%AD%E4%BB%A3%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.4.</span> <span class="nav-text">4.4 迭代机制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.5.</span> <span class="nav-text">5. 流程图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.</span> <span class="nav-text">6. 系统流程示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5"><span class="nav-number">1.6.1.</span> <span class="nav-text">输入:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-1-%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E5%B9%B6%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.2.</span> <span class="nav-text">步骤 1:模型推理并生成代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-2-%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.3.</span> <span class="nav-text">步骤 2:执行代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-3-%E5%B0%86%E7%BB%93%E6%9E%9C%E6%95%B4%E5%90%88%E5%88%B0%E6%8E%A8%E7%90%86%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">1.6.4.</span> <span class="nav-text">步骤 3:将结果整合到推理上下文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-4-%E7%BB%A7%E7%BB%AD%E6%8E%A8%E7%90%86"><span class="nav-number">1.6.5.</span> <span class="nav-text">步骤 4:继续推理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E5%85%B3%E9%94%AE%E9%97%AE%E9%A2%98%E4%B8%8E%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.7.</span> <span class="nav-text">7. 关键问题与解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E6%8A%80%E6%9C%AF%E6%A0%88%E4%B8%8E%E5%B7%A5%E5%85%B7"><span class="nav-number">1.8.</span> <span class="nav-text">8. 技术栈与工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E6%9C%AA%E6%9D%A5%E4%BC%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="nav-number">1.9.</span> <span class="nav-text">9. 未来优化方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-%E6%80%BB%E7%BB%93"><span class="nav-number">1.10.</span> <span class="nav-text">10. 总结</span></a></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="leezhuuuuu"
-      src="https://avatars.githubusercontent.com/u/178091611?v=4">
-  <p class="site-author-name" itemprop="name">leezhuuuuu</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">8</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">4</span>
-        <span class="site-state-item-name">分类</span>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">5</span>
-        <span class="site-state-item-name">标签</span>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/leezhuuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leezhuuuuu" rel="noopener me" target="_blank">GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:me@leezhu.cn" title="E-Mail → mailto:me@leezhu.cn" rel="noopener me" target="_blank">E-Mail</a>
-      </span>
-  </div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
-  
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/178091611?v=4">
-      <meta itemprop="name" content="leezhuuuuu">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="leezhuuuuu's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="基于调度员的数学问题求解系统 | leezhuuuuu's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          基于调度员的数学问题求解系统
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-10-08 12:39:50" itemprop="dateCreated datePublished" datetime="2024-10-08T12:39:50+08:00">2024-10-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-15 11:36:07" itemprop="dateModified" datetime="2025-04-15T11:36:07+08:00">2025-04-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">经验技术分享</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">学术</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p>由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。</p>
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="custom-style" content="&lt;style&gt;article .content, article .article-more-link { display: none !important"><title>基于调度员的数学问题求解系统 - leezhuuuuu&#039;s blog</title><link rel="manifest" href="../../../../manifest.json"><meta name="application-name" content="leezhuuuuu&#039;s blog"><meta name="msapplication-TileImage" content="https://avatars.githubusercontent.com/u/178091611?v=4"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="leezhuuuuu&#039;s blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="当大语言模型遇到复杂的数学问题时，我们能否超越单一的“端到端”求解模式？本文提出了一种精巧的解决方案：构建一个以“调度员”（Scheduler）为核心的智能系统。该系统巧妙地将LLM的抽象公式生成能力与Python（SymPy&amp;#x2F;NumPy）的精确数值计算能力解耦，并通过一个智能调度核心，在公式生成、代码执行和结果验证之间进行动态、迭代的调度。这不仅是一个数学求解工具的设计，更是一种将LLM作为“"><meta property="og:type" content="blog"><meta property="og:title" content="基于调度员的数学问题求解系统"><meta property="og:url" content="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><meta property="og:site_name" content="leezhuuuuu&#039;s blog"><meta property="og:description" content="当大语言模型遇到复杂的数学问题时，我们能否超越单一的“端到端”求解模式？本文提出了一种精巧的解决方案：构建一个以“调度员”（Scheduler）为核心的智能系统。该系统巧妙地将LLM的抽象公式生成能力与Python（SymPy&amp;#x2F;NumPy）的精确数值计算能力解耦，并通过一个智能调度核心，在公式生成、代码执行和结果验证之间进行动态、迭代的调度。这不仅是一个数学求解工具的设计，更是一种将LLM作为“"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://leezhuuuuu.github.io/img/og_image.png"><meta property="article:published_time" content="2024-10-08T04:39:50.000Z"><meta property="article:modified_time" content="2025-08-17T16:58:51.911Z"><meta property="article:author" content="leezhuuuuu"><meta property="article:tag" content="经验技术"><meta property="article:tag" content="NLP"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://leezhuuuuu.github.io/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"},"headline":"基于调度员的数学问题求解系统","image":["https://leezhuuuuu.github.io/img/og_image.png"],"datePublished":"2024-10-08T04:39:50.000Z","dateModified":"2025-08-17T16:58:51.911Z","author":{"@type":"Person","name":"leezhuuuuu"},"publisher":{"@type":"Organization","name":"leezhuuuuu's blog","logo":{"@type":"ImageObject","url":"https://avatars.githubusercontent.com/u/178091611?v=4"}},"description":"当大语言模型遇到复杂的数学问题时，我们能否超越单一的“端到端”求解模式？本文提出了一种精巧的解决方案：构建一个以“调度员”（Scheduler）为核心的智能系统。该系统巧妙地将LLM的抽象公式生成能力与Python（SymPy&#x2F;NumPy）的精确数值计算能力解耦，并通过一个智能调度核心，在公式生成、代码执行和结果验证之间进行动态、迭代的调度。这不仅是一个数学求解工具的设计，更是一种将LLM作为“"}</script><link rel="canonical" href="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><link rel="icon" href="https://avatars.githubusercontent.com/u/178091611?v=4"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="../../../../css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="../../../../index.html"><img src="https://avatars.githubusercontent.com/u/178091611?v=4" alt="leezhuuuuu&#039;s blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="../../../../index.html">Home</a><a class="navbar-item" href="../../../../archives">Archives</a><a class="navbar-item" href="../../../../about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2024-10-08T04:39:50.000Z" title="2024/10/8 12:39:50">2024-10-08</time>发表</span><span class="level-item"><time dateTime="2025-08-17T16:58:51.911Z" title="2025/8/18 00:58:51">2025-08-18</time>更新</span><span class="level-item"><a class="link-muted" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a><span> / </span><a class="link-muted" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/">学术</a><span> / </span><a class="link-muted" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/">NLP</a></span><span class="level-item">16 分钟读完 (大约2362个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">基于调度员的数学问题求解系统</h1><div class="content"><blockquote>
+<p>当大语言模型遇到复杂的数学问题时，我们能否超越单一的“端到端”求解模式？本文提出了一种精巧的解决方案：构建一个以“调度员”（Scheduler）为核心的智能系统。该系统巧妙地将LLM的抽象公式生成能力与Python（SymPy/NumPy）的精确数值计算能力解耦，并通过一个智能调度核心，在公式生成、代码执行和结果验证之间进行动态、迭代的调度。这不仅是一个数学求解工具的设计，更是一种将LLM作为“符号推理引擎”而非“计算器”的全新架构范式，为解决多步骤、迭代性问题提供了极具启发性的思路。</p>
+</blockquote>
+<span id="more"></span>
+<p>由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。</p>
 <h2 id="基于中断处理的模型推理与代码计算结合的数学求解系统">基于中断处理的模型推理与代码计算结合的数学求解系统</h2>
 <h3 id="1-项目背景">1. 项目背景</h3>
 <p>在复杂的数学问题求解中,语言模型(如 OpenAI 的 GPT-4)可以生成推理步骤,但它的计算能力受限,因为大模型主要依赖概率生成而非实际数值计算。因此,本项目提出了一种将语言模型的推理能力与编程计算结合的方法。通过动态中断模型的推理过程,将推理中的计算任务交给实际的代码执行模块来处理,并返回计算结果与推理过程整合,从而实现对复杂数学问题的逐步解决。</p>
@@ -380,77 +159,48 @@
 </ol>
 <h3 id="10-总结">10. 总结</h3>
 <p>本系统通过将大语言模型的推理能力与代码执行模块结合,提供了一种新的数学问题求解方法。通过中断模型推理,执行实际计算并返回结果,系统能够动态调整推理路径,从而解决复杂的计算问题。这种方法兼具灵活性与精度,能够应用于多种场景下的逐步求解。</p>
-
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/" rel="tag"># 经验技术</a>
-              <a href="/tags/NLP/" rel="tag"># NLP</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/" rel="prev" title="基于中断处理的模型推理与代码计算结合的数学求解系统">
-                  <i class="fa fa-angle-left"></i> 基于中断处理的模型推理与代码计算结合的数学求解系统
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/" rel="next" title="增强语言模型计算能力的一种方法：基于暂停推理的外部计算">
-                  增强语言模型计算能力的一种方法：基于暂停推理的外部计算 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">leezhuuuuu</span>
-  </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
-
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-</body>
-</html>
+</div><div class="article-licensing box"><div class="licensing-title"><p>基于调度员的数学问题求解系统</p><p><a href="https://leezhuuuuu.github.io/2024/10/08/基于调度员的数学问题求解系统/">https://leezhuuuuu.github.io/2024/10/08/基于调度员的数学问题求解系统/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>leezhuuuuu</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2024-10-08</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2025-08-18</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="../../../../tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/">经验技术</a><a class="link-muted mr-2" rel="tag" href="../../../../tags/NLP/">NLP</a></div><!--!--></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="../../../11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">增强语言模型计算能力的一种方法：基于暂停推理的外部计算</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="../%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><span class="level-item">基于中断处理的模型推理与代码计算结合的数学求解系统</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="https://avatars.githubusercontent.com/u/178091611?v=4" alt="leezhuuuuu"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">leezhuuuuu</p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="../../../../archives/"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="../../../../categories/"><p class="title">4</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="../../../../tags/"><p class="title">5</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/leezhuuuuu" target="_blank" rel="me noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="Github" href="https://github.com/leezhuuuuu"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="E-mail" href="../../../../mailto:me@leezhu.cn"><i class="fas fa-envelope"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile" href="../../../../categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/"><span class="level-start"><span class="level-item">知识点学习</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/"><span class="level-start"><span class="level-item">经验技术分享</span></span><span class="level-end"><span class="level-item tag">4</span></span></a><ul><li><a class="level is-mobile" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/"><span class="level-start"><span class="level-item">学术</span></span><span class="level-end"><span class="level-item tag">3</span></span></a><ul><li><a class="level is-mobile" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/"><span class="level-start"><span class="level-item">NLP</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li></ul></li></ul></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2025-08-17T15:05:26.000Z">2025-08-17</time></p><p class="title"><a href="../../../../2025/08/17/LLM-Agent%E8%AE%A4%E7%9F%A5%E5%B7%A5%E7%A8%8B%E5%AD%A6%E6%8A%A5%E5%91%8A%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E5%A6%82%E4%BD%95%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E6%99%BA%E8%83%BD/">LLM Agent认知工程学报告：数据格式如何定义模型智能</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2025-01-17T07:11:12.000Z">2025-01-17</time></p><p class="title"><a href="../../../../2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/">关于一个通用agent-Mindhub的构思</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-11-13T01:48:02.000Z">2024-11-13</time></p><p class="title"><a href="../../../11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/">增强语言模型计算能力的一种方法：基于暂停推理的外部计算</a></p><p class="categories"><a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a> / <a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/">学术</a> / <a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/">NLP</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-10-08T04:39:50.000Z">2024-10-08</time></p><p class="title"><a href="">基于调度员的数学问题求解系统</a></p><p class="categories"><a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a> / <a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/">学术</a> / <a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/">NLP</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2024-10-08T04:39:28.000Z">2024-10-08</time></p><p class="title"><a href="../%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/">基于中断处理的模型推理与代码计算结合的数学求解系统</a></p><p class="categories"><a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a> / <a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/">学术</a> / <a href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/">NLP</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="../../../../archives/2025/08/"><span class="level-start"><span class="level-item">八月 2025</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="../../../../archives/2025/01/"><span class="level-start"><span class="level-item">一月 2025</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="../../../../archives/2024/11/"><span class="level-start"><span class="level-item">十一月 2024</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="../../../../archives/2024/10/"><span class="level-start"><span class="level-item">十月 2024</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile" href="../../../../archives/2023/12/"><span class="level-start"><span class="level-item">十二月 2023</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="../../../../tags/NLP/"><span class="tag">NLP</span><span class="tag">3</span></a></div><div class="control"><a class="tags has-addons" href="../../../../tags/%E6%95%B0%E5%AD%A6/"><span class="tag">数学</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="../../../../tags/%E7%94%B5%E7%A3%81%E5%9C%BA/"><span class="tag">电磁场</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="../../../../tags/%E7%9F%A5%E8%AF%86%E7%82%B9/"><span class="tag">知识点</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="../../../../tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/"><span class="tag">经验技术</span><span class="tag">4</span></a></div></div></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="../../../../index.html"><img src="https://avatars.githubusercontent.com/u/178091611?v=4" alt="leezhuuuuu&#039;s blog" height="28"></a><p class="is-size-7"><span>&copy; 2025 leezhuuuuu</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="../../../../js/column.js"></script><script src="../../../../js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script data-pjax src="../../../../js/back_to_top.js" defer></script><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script src="../../../../js/pjax.js"></script><!--!--><script data-pjax src="../../../../js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script data-pjax src="../../../../js/insight.js" defer></script><script data-pjax>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"../../../../content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

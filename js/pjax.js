@@ -1,53 +1,42 @@
-/* global NexT, CONFIG, Pjax */
+(function() {
+    // eslint-disable-next-line no-unused-vars
+    let pjax;
 
-const pjax = new Pjax({
-  selectors: [
-    'head title',
-    'meta[property="og:title"]',
-    'script[type="application/json"]',
-    // Precede .main-inner to prevent placeholder TOC changes asap
-    '.post-toc-wrap',
-    '.main-inner',
-    '.languages',
-    '.pjax'
-  ],
-  switches: {
-    '.post-toc-wrap'(oldWrap, newWrap) {
-      if (newWrap.querySelector('.post-toc')) {
-        Pjax.switches.outerHTML.call(this, oldWrap, newWrap);
-      } else {
-        const curTOC = oldWrap.querySelector('.post-toc');
-        if (curTOC) {
-          curTOC.classList.add('placeholder-toc');
+    function initPjax() {
+        try {
+            const Pjax = window.Pjax || function() {};
+            pjax = new Pjax({
+                selectors: [
+                    '[data-pjax]',
+                    '.pjax-reload',
+                    'head title',
+                    '.columns',
+                    '.navbar-start',
+                    '.navbar-end',
+                    '.searchbox link',
+                    '.searchbox script',
+                    '#back-to-top',
+                    '#comments link',
+                    '#comments script'
+                ],
+                cacheBust: false
+            });
+        } catch (e) {
+            console.warn('PJAX error: ' + e);
         }
-        this.onSwitch();
-      }
     }
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
 
-document.addEventListener('pjax:success', () => {
-  pjax.executeScripts(document.querySelectorAll('script[data-pjax]'));
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.subMenu)
-      // Add sidebar-post-related transition.
-      .add(NexT.motion.middleWares.sidebar)
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  if (CONFIG.sidebar.display !== 'remove') {
-    const hasTOC = document.querySelector('.post-toc:not(.placeholder-toc)');
-    document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
-    NexT.utils.activateSidebarPanel(hasTOC ? 0 : 1);
-    NexT.utils.updateSidebarPosition();
-  }
-});
+    // // Listen for start of Pjax
+    // document.addEventListener('pjax:send', function() {
+    //     return;
+    //     // TODO pace start loading animation
+    // })
 
-if (!window.pjax) window.pjax = pjax;
+    // // Listen for completion of Pjax
+    // document.addEventListener('pjax:complete', function() {
+    //     return;
+    //     // TODO pace stop loading animation
+    // })
+
+    document.addEventListener('DOMContentLoaded', () => initPjax());
+}());

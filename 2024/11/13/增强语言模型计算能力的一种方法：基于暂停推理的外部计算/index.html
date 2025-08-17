@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="增强语言模型计算能力的一种方法：基于暂停推理的外部计算 这篇论文描述了一种增强语言模型计算能力的方法，其核心思想是将计算任务委托给外部计算模块，并通过暂停（而非中断）和继续推理机制，将计算结果无缝整合回语言模型的生成过程中。虽然本文主要关注计算能力的增强，但该方法具有更广泛的适用性，未来可以扩展到其他类型的外部函数调用。 1. 引言 大型语言模型 (LLM) 在自然语言处理任务中取得了显著的成功。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="增强语言模型计算能力的一种方法：基于暂停推理的外部计算">
+<meta property="og:url" content="https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/index.html">
+<meta property="og:site_name" content="leezhuuuuu&#39;s blog">
+<meta property="og:description" content="增强语言模型计算能力的一种方法：基于暂停推理的外部计算 这篇论文描述了一种增强语言模型计算能力的方法，其核心思想是将计算任务委托给外部计算模块，并通过暂停（而非中断）和继续推理机制，将计算结果无缝整合回语言模型的生成过程中。虽然本文主要关注计算能力的增强，但该方法具有更广泛的适用性，未来可以扩展到其他类型的外部函数调用。 1. 引言 大型语言模型 (LLM) 在自然语言处理任务中取得了显著的成功。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-11-13T01:48:02.000Z">
+<meta property="article:modified_time" content="2025-04-15T03:36:07.860Z">
+<meta property="article:author" content="leezhuuuuu">
+<meta property="article:tag" content="经验技术">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>增强语言模型计算能力的一种方法：基于暂停推理的外部计算</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="../../../../css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="../../../../2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="../../../10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&text=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&is_video=false&description=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=增强语言模型计算能力的一种方法：基于暂停推理的外部计算&body=Check out this article: https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&name=增强语言模型计算能力的一种方法：基于暂停推理的外部计算&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&t=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97"><span class="toc-number">1.</span> <span class="toc-text">增强语言模型计算能力的一种方法：基于暂停推理的外部计算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BC%95%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">1. 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">2. 方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E6%95%B0%E6%8D%AE%E9%9B%86%E6%9E%84%E5%BB%BA%E4%B8%8E%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 数据集构建与模型微调</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-%E6%8E%A8%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 推理过程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">3. 注意力机制的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">1.4.</span> <span class="toc-text">4. 与传统方法的比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-%E6%B5%81%E7%A8%8B%E5%AF%B9%E6%AF%94"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 流程对比</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">传统方法的工作原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B0%E7%9A%84%E6%96%B9%E6%B3%95%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">新的方法的工作原理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-%E4%BE%8B%E5%AD%90%E5%AF%B9%E6%AF%94"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 例子对比</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.</span> <span class="toc-text">5. 优缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%9C%AA%E6%9D%A5%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.6.</span> <span class="toc-text">6. 未来工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E7%BB%93%E8%AE%BA"><span class="toc-number">1.7.</span> <span class="toc-text">7. 结论</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        增强语言模型计算能力的一种方法：基于暂停推理的外部计算
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">leezhuuuuu</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-11-13T01:48:02.000Z" class="dt-published" itemprop="datePublished">2024-11-13</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a> › <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/">学术</a> › <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/">NLP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="../../../../tags/NLP/" rel="tag">NLP</a>, <a class="p-category" href="../../../../tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/" rel="tag">经验技术</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="增强语言模型计算能力的一种方法：基于暂停推理的外部计算">增强语言模型计算能力的一种方法：基于暂停推理的外部计算</h2>
+<p>这篇论文描述了一种增强语言模型计算能力的方法，其核心思想是将计算任务委托给外部计算模块，并通过<strong>暂停</strong>（而非中断）和继续推理机制，将计算结果无缝整合回语言模型的生成过程中。虽然本文主要关注计算能力的增强，但该方法具有更广泛的适用性，未来可以扩展到其他类型的外部函数调用。</p>
+<h3 id="1-引言">1. 引言</h3>
+<p>大型语言模型 (LLM) 在自然语言处理任务中取得了显著的成功。然而，当处理需要精确计算的任务时，LLM 经常表现出“计算幻觉”的现象，即生成的数值结果可能不准确。这是因为 LLM 本质上是基于统计规律的模型，它们通过学习数据中的文本模式来生成文本，而非进行实际的数学计算。为了解决这个问题，我们提出一种基于暂停推理和外部计算的增强方法，以结合 LLM 的生成能力和外部计算模块的精确性。</p>
+<h3 id="2-方法">2. 方法</h3>
+<h4 id="2-1-数据集构建与模型微调">2.1 数据集构建与模型微调</h4>
+<p>为了使 LLM 能够识别需要计算的场景并生成 <code>&lt;CALC&gt;</code> token，我们构建了一个包含需要计算的表达式的训练数据集。数据集中的表达式后面跟着 <code>&lt;CALC&gt;</code> token，例如：“100 + 200 = <CALC>”。然后，我们使用这个数据集对基于 Transformer 架构的预训练 LLM 进行微调，调整 Transformer 模型的参数，使其能够在需要计算的上下文中生成 <code>&lt;CALC&gt;</code> token。</p>
+<h4 id="2-2-推理过程">2.2 推理过程</h4>
+<p>在推理过程中，当 LLM 生成 <code>&lt;CALC&gt;</code> token 时，推理程序会执行以下步骤：</p>
+<ol>
+<li>
+<p><strong>暂停推理：</strong> 暂停 LLM 的推理过程，但保留当前的推理状态，包括 Transformer 模型的隐藏状态、缓存的键值对以及随机种子。</p>
+</li>
+<li>
+<p><strong>外部计算：</strong> 将需要计算的表达式传递给 Python 实现的外部计算模块，进行实际的计算。</p>
+</li>
+<li>
+<p><strong>结果 Token 化：</strong> 将计算结果转换为 <code>&lt;RESULT:value&gt;</code> token，例如 <code>&lt;RESULT:300&gt;</code>。</p>
+</li>
+<li>
+<p><strong>插入结果 Token 并继续推理：</strong> 将 <code>&lt;RESULT:value&gt;</code> token 插入到生成序列中，然后继续 LLM 的推理过程。</p>
+</li>
+</ol>
+<h3 id="3-注意力机制的作用">3. 注意力机制的作用</h3>
+<p>注意力机制在基于暂停推理和外部计算的增强 LLM 系统中扮演着关键角色：</p>
+<ol>
+<li>
+<p><strong>理解上下文并生成 <code>&lt;CALC&gt;</code> token：</strong> 多头自注意力机制使模型能够关注输入序列中的不同部分，并理解其语义关系。当模型遇到需要计算的上下文时，注意力机制帮助模型识别这种需要计算的语境，并生成 <code>&lt;CALC&gt;</code> token。</p>
+</li>
+<li>
+<p><strong>利用计算结果 <code>&lt;RESULT:value&gt;</code> 生成后续文本：</strong> 当 <code>&lt;RESULT:value&gt;</code> token 被插入到序列中时，注意力机制确保模型关注到这个 token，并基于其语义（如数值 300）生成合适的后续文本。</p>
+</li>
+<li>
+<p><strong>保持上下文一致性：</strong> 暂停推理机制保持模型的内部状态一致性，包括注意力机制的权重和缓存的键值对。这有助于模型更好地理解上下文，并生成更连贯的文本。</p>
+</li>
+<li>
+<p><strong>未来研究方向：非字符串 token 的注意力机制：</strong> 如果未来能够使用非字符串形式的 token 来表示计算公式，需要进一步研究如何将计算公式的向量表示作为 query，与 LLM 中其他 token 的键值对进行注意力计算。</p>
+</li>
+</ol>
+<h3 id="4-与传统方法的比较">4. 与传统方法的比较</h3>
+<h4 id="4-1-流程对比">4.1 流程对比</h4>
+<h5 id="传统方法的工作原理">传统方法的工作原理</h5>
+<pre class="mermaid">graph TD
+    A[输入文本] --> B[LLM推理]
+    B --> C[生成计算表达式]
+    C --> D[生成计算结果]
+    D --> E[输出结果]</pre>
+<h5 id="新的方法的工作原理">新的方法的工作原理</h5>
+<pre class="mermaid">graph TD
+    A[输入文本] --> B[LLM推理]
+    B --> C{生成<CALC>标记}
+    C -->|是| D[暂停推理]
+    D --> E[外部计算模块]
+    E --> F[计算结果]
+    F --> G[生成<RESULT:value>标记]
+    G --> H[继续推理]
+    H --> I[输出结果]
+    C -->|否| I</pre>
+<h4 id="4-2-例子对比">4.2 例子对比</h4>
+<p>假设输入文本是 “计算 100 + 200 等于多少？”</p>
+<ul>
+<li><strong>传统方法：</strong> LLM 直接根据概率进行推理，可能输出 “计算 100 + 200 等于 300”。</li>
+<li><strong>新方法：</strong>
+<ol>
+<li>LLM 根据输入和训练数据，生成 “计算 100 + 200 等于 <CALC>”。</li>
+<li>推理过程暂停，并将 “100 + 200” 传递给外部计算模块。</li>
+<li>外部计算模块计算得到结果 300。</li>
+<li>将结果转换为 <code>&lt;RESULT:300&gt;</code> token。</li>
+<li>将 <code>&lt;RESULT:300&gt;</code> token 插入到生成序列中，然后继续 LLM 的推理过程，最终输出 “计算 100 + 200 等于 300。”。</li>
+</ol>
+</li>
+</ul>
+<h3 id="5-优缺点">5. 优缺点</h3>
+<p><strong>优点:</strong></p>
+<ul>
+<li>提高计算准确性：消除了 LLM 的“计算幻觉”，确保计算结果的准确性。</li>
+<li>模块化设计：将计算模块与 LLM 解耦，方便维护和升级。</li>
+<li>连贯性和一致性：保留模型的全部状态，确保推理过程的连贯性和一致性。</li>
+</ul>
+<p><strong>缺点:</strong></p>
+<ul>
+<li>推理速度：外部计算模块的调用可能会引入额外的计算延迟。</li>
+<li>实现复杂度：需要修改 LLM 的推理过程，并实现外部计算模块。</li>
+</ul>
+<h3 id="6-未来工作">6. 未来工作</h3>
+<ul>
+<li>优化外部计算模块的效率：提高外部计算模块的计算速度，减少计算延迟。</li>
+<li>探索更高效的暂停推理机制：研究如何在 Transformer 架构中更高效地实现暂停和继续推理。</li>
+<li>扩展到外部函数调用：将该方法扩展到更广泛的外部函数调用场景，例如数据库查询、外部 API 调用等。</li>
+</ul>
+<h3 id="7-结论">7. 结论</h3>
+<p>我们提出了一种基于暂停推理的外部计算方法来增强 LLM 的计算能力。该方法有效地解决了 LLM 在计算上的“计算幻觉”问题，并提高了在需要精确计算的任务上的性能。尽管存在一定的实现复杂度和潜在的计算延迟，但该方法的精度提升和模块化设计使其具有显著的优势。未来的工作将集中于优化外部计算模块的效率，探索更高效的暂停推理机制，以及将该方法扩展到更广泛的外部函数调用场景。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="../../../../index.html">首页</a></li>
+        
+          <li><a href="../../../../about/">关于</a></li>
+        
+          <li><a href="../../../../archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97"><span class="toc-number">1.</span> <span class="toc-text">增强语言模型计算能力的一种方法：基于暂停推理的外部计算</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BC%95%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">1. 引言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">2. 方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E6%95%B0%E6%8D%AE%E9%9B%86%E6%9E%84%E5%BB%BA%E4%B8%8E%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 数据集构建与模型微调</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-%E6%8E%A8%E7%90%86%E8%BF%87%E7%A8%8B"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 推理过程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">3. 注意力机制的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">1.4.</span> <span class="toc-text">4. 与传统方法的比较</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-%E6%B5%81%E7%A8%8B%E5%AF%B9%E6%AF%94"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 流程对比</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">传统方法的工作原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B0%E7%9A%84%E6%96%B9%E6%B3%95%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">新的方法的工作原理</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-%E4%BE%8B%E5%AD%90%E5%AF%B9%E6%AF%94"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 例子对比</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.5.</span> <span class="toc-text">5. 优缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%9C%AA%E6%9D%A5%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.6.</span> <span class="toc-text">6. 未来工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E7%BB%93%E8%AE%BA"><span class="toc-number">1.7.</span> <span class="toc-text">7. 结论</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&text=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&is_video=false&description=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=增强语言模型计算能力的一种方法：基于暂停推理的外部计算&body=Check out this article: https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&title=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&name=增强语言模型计算能力的一种方法：基于暂停推理的外部计算&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/&t=增强语言模型计算能力的一种方法：基于暂停推理的外部计算"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2025
+    leezhuuuuu
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="../../../../js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

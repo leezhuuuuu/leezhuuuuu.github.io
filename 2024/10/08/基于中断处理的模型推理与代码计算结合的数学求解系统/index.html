@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。 项目构建思路：基于调度员的数学问题求解系统 一、项目背景和目标 该项目旨在构建一个智能系统，用于解决复杂的数学问题。系统利用 OpenAI 大模型生成带有变量的数学公式，并结合编程和数值计算模块进行求解。为了适应多步骤问题和复杂的求解场景，引入一个 调度员（Scheduler），负责动态判断问题状态，并在不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于中断处理的模型推理与代码计算结合的数学求解系统">
+<meta property="og:url" content="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="leezhuuuuu&#39;s blog">
+<meta property="og:description" content="由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。 项目构建思路：基于调度员的数学问题求解系统 一、项目背景和目标 该项目旨在构建一个智能系统，用于解决复杂的数学问题。系统利用 OpenAI 大模型生成带有变量的数学公式，并结合编程和数值计算模块进行求解。为了适应多步骤问题和复杂的求解场景，引入一个 调度员（Scheduler），负责动态判断问题状态，并在不">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-10-08T04:39:28.000Z">
+<meta property="article:modified_time" content="2025-04-15T03:36:07.860Z">
+<meta property="article:author" content="leezhuuuuu">
+<meta property="article:tag" content="经验技术">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>基于中断处理的模型推理与代码计算结合的数学求解系统</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="../../../../css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="../%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="../../07/NT-STATUS-OBJECT-NAME-NOT-FOUND/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&text=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&is_video=false&description=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于中断处理的模型推理与代码计算结合的数学求解系统&body=Check out this article: https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&name=基于中断处理的模型推理与代码计算结合的数学求解系统&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&t=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">项目构建思路：基于调度员的数学问题求解系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF%E5%92%8C%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">一、项目背景和目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">二、系统架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.</span> <span class="toc-text">三、核心模块设计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%97%AE%E9%A2%98%E8%BE%93%E5%85%A5%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">1. 问题输入模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="toc-number">3.</span> <span class="toc-text">2. 问题解析模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%B0%83%E5%BA%A6%E5%91%98%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">3. 调度员模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97"><span class="toc-number">5.</span> <span class="toc-text">4. 代码生成模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9D%97"><span class="toc-number">6.</span> <span class="toc-text">5. 计算模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%95%B4%E5%90%88%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9D%97"><span class="toc-number">7.</span> <span class="toc-text">6. 整合输出模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">7.1.</span> <span class="toc-text">四、系统流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-number">7.2.</span> <span class="toc-text">五、关键技术栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E9%A1%B9%E7%9B%AE%E8%BF%AD%E4%BB%A3%E8%AE%A1%E5%88%92"><span class="toc-number">7.3.</span> <span class="toc-text">六、项目迭代计划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">7.4.</span> <span class="toc-text">七、总结</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        基于中断处理的模型推理与代码计算结合的数学求解系统
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">leezhuuuuu</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-10-08T04:39:28.000Z" class="dt-published" itemprop="datePublished">2024-10-08</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a> › <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/">学术</a> › <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/">NLP</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="../../../../tags/NLP/" rel="tag">NLP</a>, <a class="p-category" href="../../../../tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/" rel="tag">经验技术</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。</p>
+<h3 id="项目构建思路：基于调度员的数学问题求解系统">项目构建思路：基于调度员的数学问题求解系统</h3>
+<h4 id="一、项目背景和目标">一、项目背景和目标</h4>
+<p>该项目旨在构建一个智能系统，用于解决复杂的数学问题。系统利用 OpenAI 大模型生成带有变量的数学公式，并结合编程和数值计算模块进行求解。为了适应多步骤问题和复杂的求解场景，引入一个 <strong>调度员（Scheduler）</strong>，负责动态判断问题状态，并在不同模块之间调度以保证问题得到完整解答。</p>
+<p>目标是开发一个可以处理从简单方程到复杂非线性方程、多步骤问题等的系统，解决一次计算无法完成的问题，自动调度各模块进行迭代计算。</p>
+<hr>
+<h4 id="二、系统架构">二、系统架构</h4>
+<p>系统的核心是调度员模块，它连接多个处理模块，确保系统能够迭代解决问题。具体包括以下几个模块：</p>
+<ol>
+<li><strong>问题输入模块</strong>：接收用户输入的自然语言问题，将其传递给解析模块。</li>
+<li><strong>问题解析模块</strong>：利用大模型将自然语言问题转化为数学公式，公式使用通用变量表达，无需进行数值计算。</li>
+<li><strong>调度员模块</strong>：负责协调公式生成、代码生成、数值计算、问题判断等模块的交互，并决定是否需要多次迭代。</li>
+<li><strong>代码生成模块</strong>：基于公式生成相应的可执行代码，使用 <code>SymPy</code> 或 <code>NumPy</code> 进行符号或数值计算。</li>
+<li><strong>计算模块</strong>：执行生成的代码并返回计算结果。</li>
+<li><strong>整合输出模块</strong>：将通用公式、数值解和推导过程整合，形成完整的解答返回给用户。</li>
+</ol>
+<hr>
+<h4 id="三、核心模块设计">三、核心模块设计</h4>
+<h3 id="1-问题输入模块">1. <strong>问题输入模块</strong></h3>
+<ul>
+<li><strong>功能</strong>：接收用户的自然语言输入（如“求解 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mn>5</mn><mi>x</mi><mo>+</mo><mn>6</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">x^2 + 5x + 6 = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">5</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">6</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span>”），并传递给解析模块。</li>
+<li><strong>实现方式</strong>：
+<ul>
+<li>简单的表单或命令行输入接口。</li>
+<li>支持问题的语义分析和预处理。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-问题解析模块">2. <strong>问题解析模块</strong></h3>
+<ul>
+<li><strong>功能</strong>：利用 OpenAI API，将用户的自然语言问题转化为数学公式，公式包含通用变量。</li>
+<li><strong>实现思路</strong>：
+<ul>
+<li>调用大模型的 API，输入用户的自然语言问题，并在提示词中要求生成数学表达式。</li>
+<li>输出数学表达式的符号形式，确保没有具体数值。</li>
+</ul>
+</li>
+</ul>
+<p><strong>示例提示词</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">问题：请根据以下自然语言描述生成数学公式，并使用通用变量。不要进行具体的数值计算，只需输出带有变量的数学公式。</span><br><span class="line"></span><br><span class="line">输入：解方程“一个二次方程 ax^2 + bx + c = 0，求解 x”。</span><br><span class="line">输出：请使用变量 a、b、c 和 x 给出通用解。</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>输出</strong>：例如，二次方程的解析公式输出为：</li>
+</ul>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>x</mi><mo>=</mo><mfrac><mrow><mo>−</mo><mi>b</mi><mo>±</mo><msqrt><mrow><msup><mi>b</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>a</mi><mi>c</mi></mrow></msqrt></mrow><mrow><mn>2</mn><mi>a</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} 
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.2764em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5904em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mord mathnormal">a</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">−</span><span class="mord mathnormal">b</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">±</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9134em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord"><span class="mord mathnormal">b</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7401em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">4</span><span class="mord mathnormal">a</span><span class="mord mathnormal">c</span></span></span><span style="top:-2.8734em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1266em;"><span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<h3 id="3-调度员模块">3. <strong>调度员模块</strong></h3>
+<ul>
+<li><strong>功能</strong>：调度员是整个系统的核心模块，负责根据问题的状态在不同模块之间进行动态调度，处理多步骤或需要迭代的复杂问题。</li>
+<li><strong>调度逻辑</strong>：
+<ul>
+<li><strong>第一阶段判断</strong>：在公式生成后，调度员检查公式是否完整。如果公式不完整，重新调用问题解析模块调整公式；如果公式完整，进入代码生成模块。</li>
+<li><strong>第二阶段判断</strong>：在代码生成并计算后，调度员检查计算结果。如果结果不满足条件，调度员重新迭代之前的步骤（调整公式或更改代码）。</li>
+<li><strong>终止条件</strong>：当调度员认为问题已经得到完整解答时，进入整合输出模块。</li>
+</ul>
+</li>
+</ul>
+<p><strong>调度员的逻辑</strong>（伪代码）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">scheduler</span>(<span class="params">formula, code_result</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> formula.is_complete():</span><br><span class="line">        <span class="keyword">return</span> call_formula_module()</span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">not</span> code_result.is_valid():</span><br><span class="line">        <span class="keyword">return</span> call_code_module()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> generate_final_answer()</span><br></pre></td></tr></table></figure>
+<h3 id="4-代码生成模块">4. <strong>代码生成模块</strong></h3>
+<ul>
+<li><strong>功能</strong>：根据生成的数学公式，生成相应的 Python 代码，通过 <code>SymPy</code> 或 <code>NumPy</code> 等库进行符号或数值计算。</li>
+<li><strong>实现思路</strong>：
+<ul>
+<li>根据解析模块提供的通用公式，生成相应的代码。例如，对于二次方程，可以生成如下代码：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sympy <span class="keyword">as</span> sp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义符号变量</span></span><br><span class="line">a, b, c = sp.symbols(<span class="string">&#x27;a b c&#x27;</span>)</span><br><span class="line">x = sp.symbols(<span class="string">&#x27;x&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义方程</span></span><br><span class="line">equation = a * x**<span class="number">2</span> + b * x + c</span><br><span class="line"></span><br><span class="line"><span class="comment"># 求解方程</span></span><br><span class="line">solutions = sp.solve(equation, x)</span><br><span class="line">solutions</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>代码生成提示词</strong>：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">根据以下公式生成 Python 代码，使用 SymPy 库进行符号计算：</span><br><span class="line"></span><br><span class="line">输入：ax^2 + bx + c = 0</span><br><span class="line">输出：生成 Python 代码，定义变量并求解方程。</span><br></pre></td></tr></table></figure>
+<h3 id="5-计算模块">5. <strong>计算模块</strong></h3>
+<ul>
+<li><strong>功能</strong>：执行生成的 Python 代码，进行数值计算，并返回结果给调度员。</li>
+<li><strong>实现方式</strong>：
+<ul>
+<li>使用 <code>SymPy</code> 进行符号解或 <code>NumPy</code> 进行数值计算，具体取决于问题的复杂性。</li>
+<li>返回计算结果和可能的中间计算状态（如迭代的步数、误差等）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-整合输出模块">6. <strong>整合输出模块</strong></h3>
+<ul>
+<li><strong>功能</strong>：将生成的公式、数值解以及解题步骤整合成一个完整的答案。</li>
+<li><strong>实现思路</strong>：
+<ul>
+<li>结合用户的输入、生成的公式和计算的结果，生成详细解答，解释每一步的计算过程。</li>
+<li>最终输出应该包括：通用解、带入具体数值后的解、推导过程。</li>
+</ul>
+</li>
+</ul>
+<p><strong>输出示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">问题：解方程 $x^2 + 5x + 6 = 0$</span><br><span class="line"></span><br><span class="line">通用解：$x = \frac&#123;-b \pm \sqrt&#123;b^2 - 4ac&#125;&#125;&#123;2a&#125;$</span><br><span class="line"></span><br><span class="line">带入 a=1, b=5, c=6 后的解为：</span><br><span class="line">$x = \frac&#123;-5 \pm \sqrt&#123;5^2 - 4 \cdot 1 \cdot 6&#125;&#125;&#123;2 \cdot 1&#125;$</span><br><span class="line"></span><br><span class="line">计算结果：$x_1 = -2, x_2 = -3$</span><br></pre></td></tr></table></figure>
+<hr>
+<h4 id="四、系统流程图">四、系统流程图</h4>
+<p>我们可以用一个简化的流程图展示这个系统的工作流：</p>
+<pre class="mermaid">graph TD
+    A[问题输入] --> |解析自然语言| B[问题解析模块]
+    B --> |生成带变量的公式| C[调度员]
+    
+    C -->|判断是否需要代码生成| D[代码生成模块]
+    D --> E[计算模块]
+    
+    E --> |返回计算结果| C
+    
+    C --> |判断是否需要再次调用解析或生成模块| F{是否需要再次解析或计算?}
+    
+    F --> |是| B
+    F --> |是| D
+    F --> |否| G[整合输出模块]
+    
+    G --> H[输出完整解答]
+
+    style C fill:#f9f,stroke:#333,stroke-width:4px
+    style F fill:#f9f,stroke:#333,stroke-width:4px</pre>
+<hr>
+<h4 id="五、关键技术栈">五、关键技术栈</h4>
+<ul>
+<li><strong>OpenAI API</strong>：用于解析自然语言问题并生成数学公式。</li>
+<li><strong>Python 代码生成与执行</strong>：
+<ul>
+<li><code>SymPy</code>：用于符号计算。</li>
+<li><code>NumPy</code>：用于数值计算。</li>
+</ul>
+</li>
+<li><strong>Flask 或 FastAPI</strong>：用于搭建 API 接口，接收用户输入并返回结果。</li>
+<li><strong>前端框架（可选）</strong>：如 React.js 或 Vue.js，用于构建用户界面，展示输入和输出结果。</li>
+</ul>
+<hr>
+<h4 id="六、项目迭代计划">六、项目迭代计划</h4>
+<p><strong>第 1 阶段</strong>：基本功能实现</p>
+<ul>
+<li>实现问题解析模块，生成带有变量的数学公式。</li>
+<li>调用 SymPy 进行简单的符号运算。</li>
+</ul>
+<p><strong>第 2 阶段</strong>：多模块迭代与调度</p>
+<ul>
+<li>引入调度员模块，设计基本的判断逻辑，能够进行多个模块之间的调用和反馈。</li>
+</ul>
+<p><strong>第 3 阶段</strong>：复杂问题求解</p>
+<ul>
+<li>处理多步骤问题和复杂的数学问题，引入更复杂的调度逻辑。</li>
+</ul>
+<p><strong>第 4 阶段</strong>：用户界面和优化</p>
+<ul>
+<li>构建简单的用户界面，优化用户体验和系统性能。</li>
+</ul>
+<hr>
+<h4 id="七、总结">七、总结</h4>
+<p>该项目的目标是构建一个模块化、可扩展的数学问题求解系统。通过引入调度员模块，系统能够动态地处理复杂问题，确保问题得到多次迭代和调整，最终输出一个完整的解答。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="../../../../index.html">首页</a></li>
+        
+          <li><a href="../../../../about/">关于</a></li>
+        
+          <li><a href="../../../../archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">项目构建思路：基于调度员的数学问题求解系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF%E5%92%8C%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">一、项目背景和目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">二、系统架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.</span> <span class="toc-text">三、核心模块设计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%97%AE%E9%A2%98%E8%BE%93%E5%85%A5%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">1. 问题输入模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="toc-number">3.</span> <span class="toc-text">2. 问题解析模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%B0%83%E5%BA%A6%E5%91%98%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">3. 调度员模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97"><span class="toc-number">5.</span> <span class="toc-text">4. 代码生成模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9D%97"><span class="toc-number">6.</span> <span class="toc-text">5. 计算模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%95%B4%E5%90%88%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9D%97"><span class="toc-number">7.</span> <span class="toc-text">6. 整合输出模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">7.1.</span> <span class="toc-text">四、系统流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-number">7.2.</span> <span class="toc-text">五、关键技术栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E9%A1%B9%E7%9B%AE%E8%BF%AD%E4%BB%A3%E8%AE%A1%E5%88%92"><span class="toc-number">7.3.</span> <span class="toc-text">六、项目迭代计划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">7.4.</span> <span class="toc-text">七、总结</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&text=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&is_video=false&description=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=基于中断处理的模型推理与代码计算结合的数学求解系统&body=Check out this article: https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&name=基于中断处理的模型推理与代码计算结合的数学求解系统&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&t=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2025
+    leezhuuuuu
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="../../../../js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

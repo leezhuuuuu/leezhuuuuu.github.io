@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="解决 net rpc shutdown 报错 “Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND” 本文分享博主在日常生活中遇到的一个问题及解决方法，由 Gemini 1.5 Pro 002 协助生成。 在使用 net rpc shutdown 命令远程关闭 Windows 机器时，有时会遇到 C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解决 net rpc shutdown 报错 &quot;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&quot;">
+<meta property="og:url" content="https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/index.html">
+<meta property="og:site_name" content="leezhuuuuu&#39;s blog">
+<meta property="og:description" content="解决 net rpc shutdown 报错 “Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND” 本文分享博主在日常生活中遇到的一个问题及解决方法，由 Gemini 1.5 Pro 002 协助生成。 在使用 net rpc shutdown 命令远程关闭 Windows 机器时，有时会遇到 C">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-10-07T11:37:52.000Z">
+<meta property="article:modified_time" content="2025-04-15T03:36:07.859Z">
+<meta property="article:author" content="leezhuuuuu">
+<meta property="article:tag" content="经验技术">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="../../../../css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="../../08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="../../05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&text=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&is_video=false&description=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;&body=Check out this article: https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&name=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&t=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3-net-rpc-shutdown-%E6%8A%A5%E9%94%99-%E2%80%9CCould-not-initialise-pipe-winreg-Error-was-NT-STATUS-OBJECT-NAME-NOT-FOUND%E2%80%9D"><span class="toc-number">1.</span> <span class="toc-text">解决 net rpc shutdown 报错 “Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND”</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">leezhuuuuu</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-10-07T11:37:52.000Z" class="dt-published" itemprop="datePublished">2024-10-07</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fa-solid fa-archive"></i>
+        <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="../../../../tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/" rel="tag">经验技术</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="解决-net-rpc-shutdown-报错-“Could-not-initialise-pipe-winreg-Error-was-NT-STATUS-OBJECT-NAME-NOT-FOUND”">解决 net rpc shutdown 报错 “Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND”</h2>
+<p>本文分享博主在日常生活中遇到的一个问题及解决方法，由 Gemini 1.5 Pro 002 协助生成。</p>
+<p>在使用 <code>net rpc shutdown</code> 命令远程关闭 Windows 机器时，有时会遇到 <code>Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND</code> 的错误。这通常与目标 Windows 系统上的用户帐户控制 (UAC) 以及远程注册表访问权限有关。 本文将介绍如何通过配置 <code>LocalAccountTokenFilterPolicy</code> 注册表项来解决这个问题。</p>
+<p><strong>问题背景:</strong></p>
+<p><code>net rpc shutdown</code> 命令依赖于远程注册表访问。当 UAC 启用时，本地账户的管理员权限会被过滤，导致 <code>net rpc shutdown</code> 无法正常访问所需的注册表项，从而引发上述错误。</p>
+<p><strong>解决方案：启用 LocalAccountTokenFilterPolicy</strong></p>
+<p><code>LocalAccountTokenFilterPolicy</code> 注册表项控制着 UAC 对本地账户的过滤行为。启用此策略，可以解决 <code>net rpc shutdown</code> 遇到的权限问题。 虽然手动修改注册表可以实现，但使用 PowerShell 脚本更加方便和安全。</p>
+<p><strong>PowerShell 脚本:</strong></p>
+<p>以下 PowerShell 脚本可以自动创建并设置 <code>LocalAccountTokenFilterPolicy</code> 的值：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置注册表路径</span></span><br><span class="line"><span class="variable">$regPath</span> = <span class="string">&quot;HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System&quot;</span></span><br><span class="line"><span class="variable">$regKey</span> = <span class="string">&quot;LocalAccountTokenFilterPolicy&quot;</span></span><br><span class="line"><span class="variable">$regValue</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查注册表项是否存在</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">Test-Path</span> <span class="string">&quot;<span class="variable">$regPath</span>\<span class="variable">$regKey</span>&quot;</span>) &#123;</span><br><span class="line">  <span class="comment"># 获取当前值</span></span><br><span class="line">  <span class="variable">$currentValue</span> = (<span class="built_in">Get-ItemProperty</span> <span class="literal">-Path</span> <span class="variable">$regPath</span> <span class="literal">-Name</span> <span class="variable">$regKey</span>).<span class="variable">$regKey</span></span><br><span class="line">  <span class="built_in">Write-Host</span> <span class="string">&quot;注册表项 &#x27;<span class="variable">$regKey</span>&#x27; 已存在，当前值为: <span class="variable">$currentValue</span>&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 如果当前值与目标值不同，则更新</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="variable">$currentValue</span> <span class="operator">-ne</span> <span class="variable">$regValue</span>) &#123;</span><br><span class="line">    <span class="built_in">Set-ItemProperty</span> <span class="literal">-Path</span> <span class="variable">$regPath</span> <span class="literal">-Name</span> <span class="variable">$regKey</span> <span class="literal">-Value</span> <span class="variable">$regValue</span></span><br><span class="line">    <span class="built_in">Write-Host</span> <span class="string">&quot;注册表值 &#x27;<span class="variable">$regKey</span>&#x27; 已更新为 &#x27;<span class="variable">$regValue</span>&#x27;&quot;</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">Write-Host</span> <span class="string">&quot;注册表值 &#x27;<span class="variable">$regKey</span>&#x27; 已为 &#x27;<span class="variable">$regValue</span>&#x27;，无需更改&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment"># 创建注册表项并设置值</span></span><br><span class="line">  <span class="built_in">New-ItemProperty</span> <span class="literal">-Path</span> <span class="variable">$regPath</span> <span class="literal">-Name</span> <span class="variable">$regKey</span> <span class="literal">-PropertyType</span> DWORD <span class="literal">-Value</span> <span class="variable">$regValue</span> <span class="literal">-Force</span></span><br><span class="line">  <span class="built_in">Write-Host</span> <span class="string">&quot;注册表项 &#x27;<span class="variable">$regKey</span>&#x27; 不存在，已创建并设置为 &#x27;<span class="variable">$regValue</span>&#x27;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>使用方法:</strong></p>
+<ol>
+<li>在目标 Windows 机器上，以管理员身份运行 PowerShell。</li>
+<li>将以上代码复制到 PowerShell 窗口中并执行。</li>
+</ol>
+<p><strong>预期输出及生效:</strong></p>
+<p>成功执行脚本后，你会看到类似以下输出之一：</p>
+<ul>
+<li><code>注册表项 'LocalAccountTokenFilterPolicy' 不存在，已创建并设置为 '1'</code>  (如果注册表项之前不存在)</li>
+<li><code>注册表值 'LocalAccountTokenFilterPolicy' 已更新为 '1'</code> (如果注册表项已存在但值不为 1)</li>
+<li><code>注册表值 'LocalAccountTokenFilterPolicy' 已为 '1'，无需更改</code> (如果注册表项已存在且值为 1)</li>
+</ul>
+<p>根据博主的测试，修改注册表后<strong>无需重启或注销即可立即生效</strong>。</p>
+<p><strong>验证:</strong></p>
+<p>再次运行 <code>net rpc shutdown</code> 命令，如果配置正确，命令应该会成功执行，远程关闭目标 Windows 机器。</p>
+<p><strong>其他可能的解决方案:</strong></p>
+<p>如果问题仍然存在，可以考虑以下其他解决方案：</p>
+<ul>
+<li><strong>使用域账户：</strong>  如果可能，尝试使用域账户进行远程关机，域账户通常不会受到 <code>LocalAccountTokenFilterPolicy</code> 的影响。</li>
+<li><strong>检查防火墙：</strong> 确保目标 Windows 机器上的防火墙允许远程管理和文件和打印机共享。</li>
+<li><strong>检查网络连接：</strong> 确保 Ubuntu 机器和 Windows 机器之间网络连接正常。</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="../../../../index.html">首页</a></li>
+        
+          <li><a href="../../../../about/">关于</a></li>
+        
+          <li><a href="../../../../archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3-net-rpc-shutdown-%E6%8A%A5%E9%94%99-%E2%80%9CCould-not-initialise-pipe-winreg-Error-was-NT-STATUS-OBJECT-NAME-NOT-FOUND%E2%80%9D"><span class="toc-number">1.</span> <span class="toc-text">解决 net rpc shutdown 报错 “Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND”</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&text=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&is_video=false&description=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;&body=Check out this article: https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&title=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&name=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/&t=解决 net rpc shutdown 报错 &#34;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&#34;"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2025
+    leezhuuuuu
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="../../../../js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="在近期，我畅想，希望能够开发一款真正通用型agent，但是由于没有充分的开发时间以及这个agent开发起来是有一定难度的，我现在先把我整理的有关这个agent的架构设计写在本篇博客中，以待后续开发。 MindHub 工程化实现方案  一、项目文件结构 MindHub 项目采用模块化设计，文件结构如下： 123456789101112131415161718192021222324252627282">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于一个通用agent-Mindhub的构思">
+<meta property="og:url" content="https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/index.html">
+<meta property="og:site_name" content="leezhuuuuu&#39;s blog">
+<meta property="og:description" content="在近期，我畅想，希望能够开发一款真正通用型agent，但是由于没有充分的开发时间以及这个agent开发起来是有一定难度的，我现在先把我整理的有关这个agent的架构设计写在本篇博客中，以待后续开发。 MindHub 工程化实现方案  一、项目文件结构 MindHub 项目采用模块化设计，文件结构如下： 123456789101112131415161718192021222324252627282">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-17T07:11:12.000Z">
+<meta property="article:modified_time" content="2025-04-15T03:36:07.860Z">
+<meta property="article:author" content="leezhuuuuu">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>关于一个通用agent-Mindhub的构思</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="../../../../css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="../../../08/17/LLM-Agent%E8%AE%A4%E7%9F%A5%E5%B7%A5%E7%A8%8B%E5%AD%A6%E6%8A%A5%E5%91%8A%EF%BC%9A%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E5%A6%82%E4%BD%95%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E6%99%BA%E8%83%BD/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="../../../../2024/11/13/%E5%A2%9E%E5%BC%BA%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%A1%E7%AE%97%E8%83%BD%E5%8A%9B%E7%9A%84%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%EF%BC%9A%E5%9F%BA%E4%BA%8E%E6%9A%82%E5%81%9C%E6%8E%A8%E7%90%86%E7%9A%84%E5%A4%96%E9%83%A8%E8%AE%A1%E7%AE%97/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&text=关于一个通用agent-Mindhub的构思"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&is_video=false&description=关于一个通用agent-Mindhub的构思"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=关于一个通用agent-Mindhub的构思&body=Check out this article: https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&name=关于一个通用agent-Mindhub的构思&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&t=关于一个通用agent-Mindhub的构思"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E8%BF%91%E6%9C%9F%EF%BC%8C%E6%88%91%E7%95%85%E6%83%B3%EF%BC%8C%E5%B8%8C%E6%9C%9B%E8%83%BD%E5%A4%9F%E5%BC%80%E5%8F%91%E4%B8%80%E6%AC%BE%E7%9C%9F%E6%AD%A3%E9%80%9A%E7%94%A8%E5%9E%8Bagent%EF%BC%8C%E4%BD%86%E6%98%AF%E7%94%B1%E4%BA%8E%E6%B2%A1%E6%9C%89%E5%85%85%E5%88%86%E7%9A%84%E5%BC%80%E5%8F%91%E6%97%B6%E9%97%B4%E4%BB%A5%E5%8F%8A%E8%BF%99%E4%B8%AAagent%E5%BC%80%E5%8F%91%E8%B5%B7%E6%9D%A5%E6%98%AF%E6%9C%89%E4%B8%80%E5%AE%9A%E9%9A%BE%E5%BA%A6%E7%9A%84%EF%BC%8C%E6%88%91%E7%8E%B0%E5%9C%A8%E5%85%88%E6%8A%8A%E6%88%91%E6%95%B4%E7%90%86%E7%9A%84%E6%9C%89%E5%85%B3%E8%BF%99%E4%B8%AAagent%E7%9A%84%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E5%86%99%E5%9C%A8%E6%9C%AC%E7%AF%87%E5%8D%9A%E5%AE%A2%E4%B8%AD%EF%BC%8C%E4%BB%A5%E5%BE%85%E5%90%8E%E7%BB%AD%E5%BC%80%E5%8F%91%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">在近期，我畅想，希望能够开发一款真正通用型agent，但是由于没有充分的开发时间以及这个agent开发起来是有一定难度的，我现在先把我整理的有关这个agent的架构设计写在本篇博客中，以待后续开发。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MindHub-%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">MindHub 工程化实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">一、项目文件结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E5%8F%8A%E9%80%BB%E8%BE%91"><span class="toc-number">2.2.</span> <span class="toc-text">二、核心组件及逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81DirectorCore-%E4%B8%8E-AgentNode-%E9%80%9A%E4%BF%A1%E6%9C%BA%E5%88%B6"><span class="toc-number">2.3.</span> <span class="toc-text">三、DirectorCore 与 AgentNode 通信机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3"><span class="toc-number">2.4.</span> <span class="toc-text">四、配置文件详解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%A0%B8%E5%BF%83%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-number">2.5.</span> <span class="toc-text">五、核心工作流程及架构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%9E%84"><span class="toc-number">2.6.</span> <span class="toc-text">六、部署架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%AE%89%E5%85%A8%E5%A2%9E%E5%BC%BA"><span class="toc-number">2.7.</span> <span class="toc-text">七、安全增强</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E5%8F%AF%E9%80%89%E5%8A%9F%E8%83%BD"><span class="toc-number">2.8.</span> <span class="toc-text">八、可选功能</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        关于一个通用agent-Mindhub的构思
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">leezhuuuuu</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-01-17T07:11:12.000Z" class="dt-published" itemprop="datePublished">2025-01-17</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h3 id="在近期，我畅想，希望能够开发一款真正通用型agent，但是由于没有充分的开发时间以及这个agent开发起来是有一定难度的，我现在先把我整理的有关这个agent的架构设计写在本篇博客中，以待后续开发。">在近期，我畅想，希望能够开发一款真正通用型agent，但是由于没有充分的开发时间以及这个agent开发起来是有一定难度的，我现在先把我整理的有关这个agent的架构设计写在本篇博客中，以待后续开发。</h3>
+<h3 id="MindHub-工程化实现方案">MindHub 工程化实现方案</h3>
+<hr>
+<h4 id="一、项目文件结构">一、项目文件结构</h4>
+<p>MindHub 项目采用模块化设计，文件结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line">MindHub/</span><br><span class="line">├── README.md               # 项目说明文档，包含项目介绍、安装指南、使用示例等</span><br><span class="line">├── requirements.txt        # 项目依赖，使用 pip freeze &gt; requirements.txt 生成</span><br><span class="line">├── setup.py                # 项目打包配置 (可选)，用于将项目打包成可安装的 Python 包</span><br><span class="line">├── .gitignore              # Git 忽略文件，定义不需要提交到 Git 仓库的文件和目录</span><br><span class="line">├── docs/                   # 项目文档目录</span><br><span class="line">│   ├── architecture.md     # 架构设计文档，详细描述系统的整体架构、组件和交互方式</span><br><span class="line">│   ├── user_guide.md       # 用户指南，面向用户，介绍如何使用 MindHub</span><br><span class="line">│   ├── api_reference.md    # API 参考文档 (可选)，详细描述 MindHub 提供的 API 接口</span><br><span class="line">│   └── ...                 # 其他文档文件</span><br><span class="line">├── configs/                # 配置文件目录</span><br><span class="line">│   ├── director/           # DirectorCore 配置目录</span><br><span class="line">│   │   ├── config.yaml         # DirectorCore 通用配置，例如 NetProtocol 相关配置</span><br><span class="line">│   │   ├── prompts/            # DirectorCore 提示词模板目录</span><br><span class="line">│   │   │   ├── task_decomposition.txt   # 任务分解提示词</span><br><span class="line">│   │   │   ├── agent_selection.txt      # Agent 选择提示词</span><br><span class="line">│   │   │   ├── task_graph_generation.txt # 任务图生成提示词</span><br><span class="line">│   │   │   ├── task_graph_update.txt     # 任务图更新提示词</span><br><span class="line">│   │   │   └── ...                     # 其他提示词文件</span><br><span class="line">│   │   └── llm_settings.yaml   # DirectorCore LLM 输出约束，定义用于约束 LLM 输出的正则表达式</span><br><span class="line">│   ├── agent/              # AgentNode 配置目录</span><br><span class="line">│   │   ├── config.yaml         # AgentNode 通用配置，例如 NetProtocol 相关配置</span><br><span class="line">│   │   ├── prompts/            # AgentNode 提示词模板目录</span><br><span class="line">│   │   │   ├── expert_agent_prompt.txt   # ExpertAgent 提示词</span><br><span class="line">│   │   │   ├── critic_agent_prompt.txt   # CriticAgent 提示词</span><br><span class="line">│   │   │   ├── executor_agent_prompt.txt # ExecutorAgent 提示词</span><br><span class="line">│   │   │   ├── browser_agent_prompt.txt  # BrowserAgent 提示词，用于指导 BrowserAgent 执行浏览器操作</span><br><span class="line">│   │   │   └── ...                     # 其他提示词文件</span><br><span class="line">│   │   └── llm_settings.yaml   # AgentNode LLM 输出约束，定义用于约束 LLM 输出的正则表达式</span><br><span class="line">│   ├── llm_gateway_config.yaml # 全局 LLM Gateway 配置，配置 LLM 提供商、模型名称、API 密钥等</span><br><span class="line">│   ├── storage_config.yaml     # MindStorage 配置，配置 MindStorage 的行为，例如存储类型、连接参数等</span><br><span class="line">│   ├── permissions.yaml        # 权限控制矩阵，定义角色和权限，控制 DirectorCore 和 AgentNode 内部不同角色之间的访问权限</span><br><span class="line">│   └── ...                     # 其他配置文件</span><br><span class="line">├── data/                   # 数据目录 (可选)，用于存放测试数据、示例数据等</span><br><span class="line">│   └── ...                 # 数据文件</span><br><span class="line">├── logs/                   # 日志目录，存放系统运行日志</span><br><span class="line">│   └── ...                 # 日志文件</span><br><span class="line">├── tests/                  # 测试目录，存放单元测试和集成测试</span><br><span class="line">│   ├── unit/               # 单元测试目录</span><br><span class="line">│   │   ├── test_director.py    # DirectorCore 单元测试</span><br><span class="line">│   │   ├── test_agent.py       # AgentNode 单元测试</span><br><span class="line">│   │   ├── test_netprotocol.py # NetProtocol 单元测试</span><br><span class="line">│   │   ├── test_mindstorage.py # MindStorage 单元测试</span><br><span class="line">│   │   ├── test_llm_gateway.py # LLMGateway 单元测试</span><br><span class="line">│   │   ├── test_browser_agent.py  # BrowserAgent 单元测试，测试 BrowserAgent 的功能</span><br><span class="line">│   │   └── ...                 # 其他单元测试文件</span><br><span class="line">│   ├── integration/        # 集成测试目录</span><br><span class="line">│   │   ├── test_director_agent_interaction.py # DirectorCore 和 AgentNode 交互测试</span><br><span class="line">│   │   ├── test_end_to_end_workflow.py         # 端到端工作流测试</span><br><span class="line">│   │   ├── test_browser_agent_integration.py    # BrowserAgent 集成测试，测试 BrowserAgent 在整个系统中的集成情况</span><br><span class="line">│   │   └── ...                                # 其他集成测试文件</span><br><span class="line">│   ├── conftest.py         # pytest 配置文件，用于配置 pytest 的行为</span><br><span class="line">│   └── ...                 # 其他测试相关文件</span><br><span class="line">└── mindhub/                # 项目核心代码目录</span><br><span class="line">    ├── __init__.py          # 初始化文件，用于将 mindhub 目录标记为一个 Python 包</span><br><span class="line">    ├── common/              # 通用工具和模块目录</span><br><span class="line">    │   ├── __init__.py       # 初始化文件</span><br><span class="line">    │   ├── utils.py          # 通用工具函数，例如字符串处理、数据转换等</span><br><span class="line">    │   ├── constants.py      # 常量定义，定义项目中使用的常量</span><br><span class="line">    │   ├── errors.py         # 自定义错误类，定义项目中使用的自定义错误类型</span><br><span class="line">    │   ├── decorators.py     # 装饰器 (可选)，用于简化代码，例如添加日志、权限验证等</span><br><span class="line">    │   ├── schemas.py        # Avro schemas 定义，定义消息的 Avro schema</span><br><span class="line">    │   └── ...               # 其他通用模块</span><br><span class="line">    ├── architecture/        # 系统架构核心组件目录</span><br><span class="line">    │   ├── __init__.py       # 初始化文件</span><br><span class="line">    │   ├── director/        # DirectorCore 模块目录</span><br><span class="line">    │   │   ├── __init__.py    # 初始化文件</span><br><span class="line">    │   │   ├── director_core.py    # DirectorCore 类，实现 DirectorCore 的核心逻辑</span><br><span class="line">    │   │   ├── task_graph.py       # 任务图管理，包含 TaskOrchestrator，用于管理任务之间的依赖关系</span><br><span class="line">    │   │   ├── priority_engine.py  # 优先级计算引擎，根据任务的属性和上下文计算任务的优先级</span><br><span class="line">    │   │   └── ...                # 其他 DirectorCore 相关模块</span><br><span class="line">    │   ├── agent/           # AgentNode 模块目录</span><br><span class="line">    │   │   ├── __init__.py    # 初始化文件</span><br><span class="line">    │   │   ├── agent_node.py       # AgentNode 类，实现 AgentNode 的核心逻辑</span><br><span class="line">    │   │   ├── expert_agent.py     # 专业 Agent，用于处理特定领域的任务</span><br><span class="line">    │   │   ├── critic_agent.py     # 评论 Agent，用于评估其他 Agent 的结果</span><br><span class="line">    │   │   ├── executor_agent.py   # 执行 Agent，用于执行具体的操作</span><br><span class="line">    │   │   ├── browser_agent.py    # Browser Agent，用于处理需要与 Web 浏览器交互的任务</span><br><span class="line">    │   │   ├── thought_template.py # 思维模板，定义 Agent 的思维模板，指导 Agent 的思考过程</span><br><span class="line">    │   │   ├── neuro_parser.py     # 神经解析器，解析 LLM 的响应，提取关键信息</span><br><span class="line">    │   │   └── ...                # 其他 AgentNode 相关模块</span><br><span class="line">    │   ├── netprotocol/     # NetProtocol 模块目录</span><br><span class="line">    │   │   ├── __init__.py    # 初始化文件</span><br><span class="line">    │   │   ├── message_broker.py   # 消息代理，提供消息的路由和传递</span><br><span class="line">    │   │   ├── serializer.py       # 序列化器基类，定义消息序列化器的基类</span><br><span class="line">    │   │   ├── schema_registry.py  # Schema 注册表，管理消息的 Avro schemas</span><br><span class="line">    │   │   ├── avro_serializer.py   # Avro 序列化器，实现 Avro 序列化器</span><br><span class="line">    │   │   └── ...                # 其他 NetProtocol 相关模块</span><br><span class="line">    │   ├── mindstorage/     # MindStorage 模块目录</span><br><span class="line">    │   │   ├── __init__.py    # 初始化文件</span><br><span class="line">    │   │   ├── mind_storage.py     # MindStorage 类，实现 MindStorage 的核心逻辑</span><br><span class="line">    │   │   ├── in_memory_storage.py # 内存存储实现，实现内存存储</span><br><span class="line">    │   │   ├── interface.py        # 存储接口定义，定义 MindStorage 的数据访问接口</span><br><span class="line">    │   │   ├── models.py           # 数据模型定义，定义存储的数据模型</span><br><span class="line">    │   │   └── ...                # 其他 MindStorage 相关模块</span><br><span class="line">    │   ├── gateway/            # LLMGateway 模块目录</span><br><span class="line">    │   │   ├── __init__.py    # 初始化文件</span><br><span class="line">    │   │   ├── llm_gateway.py      # LLM 网关基类，定义 LLM 网关的基类</span><br><span class="line">    │   │   ├── openai_gateway.py     # OpenAI 实现 (可选)，实现 OpenAI 接口规范的适配器</span><br><span class="line">    │   │   ├── huggingface_gateway.py # Hugging Face 实现 (可选)，实现 Hugging Face 接口规范的适配器</span><br><span class="line">    │   │   └── ...                # 其他 LLMGateway 相关模块</span><br><span class="line">    │   ├── monitor/            # MindMonitor 模块目录</span><br><span class="line">    │   │   ├── __init__.py    # 初始化文件</span><br><span class="line">    │   │   ├── mind_monitor.py     # 监控核心，实现监控核心逻辑，包括数据收集、指标计算、可视化等</span><br><span class="line">    │   │   ├── metrics.py          # 指标定义，定义监控指标，例如任务执行时间、成功率、资源利用率等</span><br><span class="line">    │   │   ├── visualizer.py       # 可视化工具，实现可视化工具，例如思维链追踪图、性能图表、任务图等</span><br><span class="line">    │   │   └── ...                # 其他 MindMonitor 相关模块</span><br><span class="line">    │   └── ...               # 其他系统架构核心组件</span><br><span class="line">    └── main.py              # 项目启动入口 (可选)，用于启动 MindHub 项目</span><br></pre></td></tr></table></figure>
+<hr>
+<h4 id="二、核心组件及逻辑">二、核心组件及逻辑</h4>
+<ol>
+<li>
+<p><strong>DirectorCore (指挥核心)</strong></p>
+<ul>
+<li>
+<p><strong>职责:</strong></p>
+<ul>
+<li>接收来自 API Gateway 的用户请求。</li>
+<li>将用户问题转换为内部任务表示，例如 MindTask 对象。</li>
+<li>生成和维护任务图（Task Graph），表示任务之间的依赖关系。</li>
+<li>在每次迭代中，评估是否需要更新任务图，以适应任务执行过程中的变化。</li>
+<li>计算任务优先级，决定任务的执行顺序。</li>
+<li>选择合适的 Agent (ExpertAgent、CriticAgent、ExecutorAgent、<strong>BrowserAgent</strong>)，根据任务的类型和需求选择合适的 Agent。</li>
+<li>维护所有任务和子任务的完整变量信息，包括变量名、变量值等。</li>
+<li>通过 NetProtocol 向 AgentNode 的子角色发送任务请求 (TaskRequest, 内含需要用到的变量) 。</li>
+<li>接收来自 AgentNode 子角色的任务执行结果 (TaskResult, 内含新生成的变量)。</li>
+<li>与 MindStorage 交互, 存储和读取变量，实现变量的持久化存储和共享。</li>
+<li>监控任务执行状态，例如任务是否完成、是否出错等。</li>
+<li>调用 LLM 服务, 进行任务分解、策略制定、任务图生成与更新等。</li>
+<li>管理快照，支持回滚到之前的状态，提供系统的容错能力。</li>
+</ul>
+</li>
+<li>
+<p><strong>关键模块:</strong></p>
+<ul>
+<li><code>director_core.py</code>: 实现 DirectorCore 的核心逻辑，包括任务调度、Agent 选择、优先级计算、变量管理、任务图生成与更新、快照管理和回滚等。</li>
+<li><code>task_graph.py</code>: 管理任务之间的依赖关系，形成任务图。提供任务图的创建、更新、查询等功能。包含 TaskOrchestrator，用于协调任务的执行。</li>
+<li><code>priority_engine.py</code>: 根据任务的属性和上下文计算任务的优先级。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>AgentNode (智能体节点)</strong></p>
+<ul>
+<li>
+<p><strong>职责:</strong></p>
+<ul>
+<li>接收来自 DirectorCore 的任务请求和变量。</li>
+<li>根据任务类型, 实例化相应的 Agent 子角色 (ExpertAgent、CriticAgent、ExecutorAgent、<strong>BrowserAgent</strong>)。</li>
+<li>Agent 子角色:
+<ul>
+<li>根据任务描述和提供的变量, 调用 LLM 服务或浏览器交互工具生成响应。</li>
+<li>使用 NeuroParser 解析 LLM 的响应, 提取结构化数据 (非 BrowserAgent)。</li>
+<li>将解析后的结果 (包括新生成的变量) 通过 NetProtocol (TaskResult 消息) 发送回 DirectorCore。</li>
+<li>与 MindStorage 交互, 读取输入变量, 存储新生成的变量。</li>
+</ul>
+</li>
+<li>AgentNode 本身不存储变量, 变量由其子角色在执行任务时使用, 并将结果返回给 DirectorCore。</li>
+</ul>
+</li>
+<li>
+<p><strong>关键模块:</strong></p>
+<ul>
+<li><code>agent_node.py</code>: 实现 AgentNode 的核心逻辑，包括 Agent 执行、与 LLM/浏览器交互工具交互、结果存储等。</li>
+<li><code>expert_agent.py</code>: 专业 Agent，用于处理特定领域的任务，使用 <code>configs/agent/prompts/expert_agent_prompt.txt</code> 中的提示词模板。</li>
+<li><code>critic_agent.py</code>: 评论 Agent，用于评估其他 Agent 的结果，使用 <code>configs/agent/prompts/critic_agent_prompt.txt</code> 中的提示词模板。</li>
+<li><code>executor_agent.py</code>: 执行 Agent，用于执行具体的操作，使用 <code>configs/agent/prompts/executor_agent_prompt.txt</code> 中的提示词模板。</li>
+<li><code>browser_agent.py</code>: <strong>Browser Agent，用于处理需要与 Web 浏览器交互的任务，例如网页信息检索、数据抓取、Web 应用自动化等。使用 <code>configs/agent/prompts/browser_agent_prompt.txt</code> 中的提示词模板。</strong></li>
+<li><code>thought_template.py</code>: 定义 Agent 的思维模板，指导 Agent 的思考过程。</li>
+<li><code>neuro_parser.py</code>: 解析 LLM 的响应，提取关键信息 (非 BrowserAgent)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>NetProtocol (网络协议)</strong></p>
+<ul>
+<li>
+<p><strong>职责:</strong></p>
+<ul>
+<li>提供 DirectorCore 和 AgentNode 之间可靠的消息传递机制。</li>
+<li>消息的序列化和反序列化 (使用 Avro)。</li>
+<li>消息路由和传递 (通过 MessageBroker)。</li>
+<li>消息中包含变量 (变量名, 实际数据存储在 MindStorage 中)。</li>
+</ul>
+</li>
+<li>
+<p><strong>关键模块:</strong></p>
+<ul>
+<li><code>message_broker.py</code>: 实现消息代理的抽象接口，支持多种消息队列 (例如 Redis [可选]、RabbitMQ、Kafka)。</li>
+<li><code>serializer.py</code>: 定义消息序列化器的基类。</li>
+<li><code>schema_registry.py</code>: 管理消息的 Avro schemas。</li>
+<li><code>avro_serializer.py</code>: 实现 Avro 序列化器。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>MindStorage (思维存储)</strong></p>
+<ul>
+<li>
+<p><strong>职责:</strong></p>
+<ul>
+<li>存储所有任务和子任务的变量。</li>
+<li>自动生成变量名。</li>
+<li>提供变量的读取、写入和更新接口。</li>
+<li>支持不同的存储后端 (例如内存存储、Redis)。</li>
+<li>变量的实际内容以字符串形式存储, 并可与提示词结合使用。</li>
+</ul>
+</li>
+<li>
+<p><strong>关键模块:</strong></p>
+<ul>
+<li><code>mind_storage.py</code>: 实现 MindStorage 的核心逻辑，包括数据存储、发布/订阅、数据访问等。</li>
+<li><code>in_memory_storage.py</code>: 实现内存存储。</li>
+<li><code>interface.py</code>: 定义 MindStorage 的数据访问接口。</li>
+<li><code>models.py</code>: 定义存储的数据模型。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>LLMGateway (LLM 网关)</strong></p>
+<ul>
+<li>
+<p><strong>职责:</strong></p>
+<ul>
+<li>提供与 LLM 服务交互的统一接口。</li>
+<li>支持多种 LLM 服务 (例如 OpenAI、Hugging Face)。</li>
+<li>处理 LLM 请求和响应。</li>
+<li>支持自定义 LLM 模型。</li>
+</ul>
+</li>
+<li>
+<p><strong>关键模块:</strong></p>
+<ul>
+<li><code>llm_gateway.py</code>: 实现 LLM 网关的核心逻辑。</li>
+<li><code>openai_gateway.py</code>: 实现 OpenAI 接口规范的适配器 (可选)。</li>
+<li><code>huggingface_gateway.py</code>: 实现 Hugging Face 接口规范的适配器 (可选)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>MindMonitor (思维监视器)</strong></p>
+<ul>
+<li>
+<p><strong>职责:</strong></p>
+<ul>
+<li>提供思维链追踪可视化。</li>
+<li>监控系统资源使用情况 (CPU、内存、网络等)。</li>
+<li>监控系统性能指标 (任务处理时间、吞吐量等)。</li>
+<li>记录和展示错误日志。</li>
+<li>监控任务执行过程。</li>
+<li>收集和展示任务状态、变量变化等信息。</li>
+<li>提供任务图的可视化界面，实时显示任务图的结构、任务状态、任务之间的依赖关系等信息。</li>
+<li>监控 DirectorCore 和 AgentNode 的运行状态。</li>
+</ul>
+</li>
+<li>
+<p><strong>关键模块:</strong></p>
+<ul>
+<li><code>mind_monitor.py</code>: 实现监控核心逻辑，包括数据收集、指标计算、可视化等。</li>
+<li><code>metrics.py</code>: 定义监控指标，例如任务执行时间、成功率、资源利用率等。</li>
+<li><code>visualizer.py</code>: 实现可视化工具，例如思维链追踪图、性能图表、任务图等。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="三、DirectorCore-与-AgentNode-通信机制">三、DirectorCore 与 AgentNode 通信机制</h4>
+<p>MindHub 采用基于消息队列的通信机制, 通过 NetProtocol 实现 DirectorCore 和 AgentNode 之间的解耦和异步通信。</p>
+<ol>
+<li>
+<p><strong>消息格式:</strong></p>
+<ul>
+<li>NetProtocol 使用 Avro 作为消息的序列化格式。消息的 Schema 在 <code>common/schemas.py</code> 中定义, 并通过 <code>schema_registry.py</code> 进行管理。</li>
+<li>消息包含以下字段：
+<ul>
+<li><code>message_id</code>: 消息的唯一标识符。</li>
+<li><code>sender</code>: 消息发送者 (DirectorCore 或 AgentNode-ExpertAgent/CriticAgent/ExecutorAgent/<strong>BrowserAgent</strong>)。</li>
+<li><code>receiver</code>: 消息接收者 (DirectorCore 或 AgentNode-ExpertAgent/CriticAgent/ExecutorAgent/<strong>BrowserAgent</strong>)。</li>
+<li><code>message_type</code>: 消息类型 (例如 TaskRequest、TaskResult)。</li>
+<li><code>payload</code>: 消息负载, 根据消息类型的不同而不同。</li>
+</ul>
+</li>
+<li>常见的消息类型包括：
+<ul>
+<li><code>TaskRequest</code>: DirectorCore 向 AgentNode 子角色发送的任务请求。包含任务描述、Agent 类型和需要用到的变量(变量名, 实际数据在 MindStorage)。</li>
+<li><code>TaskResult</code>: AgentNode 子角色向 DirectorCore 发送的任务结果。包含新生成的变量 (变量名, 实际数据在 MindStorage)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>消息处理流程:</strong></p>
+<ol>
+<li>DirectorCore 将用户问题转换为 MindTask, 并生成初始变量存储在 MindStorage。DirectorCore 调用 LLM 生成初始任务图。</li>
+<li>DirectorCore 根据任务图, 决定下一个要执行的任务, 并选择合适的 Agent (ExpertAgent、CriticAgent、ExecutorAgent 或 <strong>BrowserAgent</strong>)。DirectorCore 在每次迭代中评估是否需要更新任务图。</li>
+<li>DirectorCore 从 MindStorage 读取相关变量, 并将任务描述、Agent 类型、变量列表打包成 TaskRequest 消息, 通过 NetProtocol 发送给 AgentNode。</li>
+<li>AgentNode 接收到 TaskRequest 消息, 根据 Agent 类型实例化相应的 Agent 子角色 (ExpertAgent、CriticAgent、ExecutorAgent 或 <strong>BrowserAgent</strong>)。</li>
+<li>Agent 子角色:
+<ul>
+<li>ExpertAgent、CriticAgent 或 ExecutorAgent 从 MindStorage 读取变量, 并结合自身的提示词模板 (<code>expert_agent_prompt.txt</code>、<code>critic_agent_prompt.txt</code> 或 <code>executor_agent_prompt.txt</code>), 向 LLM 服务发送请求。</li>
+<li><strong>BrowserAgent 从 MindStorage 读取变量, 并结合自身的提示词模板 (<code>browser_agent_prompt.txt</code>), 调用浏览器交互工具执行相应的浏览器操作。</strong></li>
+</ul>
+</li>
+<li>Agent 子角色:
+<ul>
+<li>ExpertAgent、CriticAgent 或 ExecutorAgent 接收到 LLM 响应后, 使用 NeuroParser 解析响应, 提取结构化数据和新生成的变量, 并存储到 MindStorage。</li>
+<li><strong>BrowserAgent 将浏览器交互工具的执行结果存储到 MindStorage。</strong></li>
+</ul>
+</li>
+<li>AgentNode 将新生成的变量打包成 TaskResult 消息, 通过 NetProtocol 发送给 DirectorCore。</li>
+<li>DirectorCore 接收到 TaskResult 消息, 更新任务状态, 并将新生成的变量存储到 MindStorage。</li>
+<li>重复步骤 2-8, 直到任务图中所有任务完成。</li>
+</ol>
+</li>
+</ol>
+<hr>
+<h4 id="四、配置文件详解">四、配置文件详解</h4>
+<ol>
+<li>
+<p><strong><code>configs/director/config.yaml</code> (DirectorCore 通用配置)</strong></p>
+<ul>
+<li><strong>用途:</strong> 存放 DirectorCore 的通用配置项，例如 NetProtocol 相关配置。</li>
+<li><strong>示例配置项:</strong>
+<ul>
+<li><code>netprotocol</code>:
+<ul>
+<li><code>message_broker</code>: 消息代理类型 (例如 redis)。</li>
+<li><code>broker_address</code>: 消息代理地址。</li>
+<li><code>serializer_type</code>: 序列化器类型 (例如 avro)。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>configs/director/prompts/</code> (DirectorCore 提示词模板)</strong></p>
+<ul>
+<li><strong>用途:</strong> 存放 DirectorCore 使用的提示词模板。</li>
+<li><strong>示例文件:</strong>
+<ul>
+<li><code>task_decomposition.txt</code>: 任务分解提示词，用于将用户问题分解成更小的子任务。</li>
+<li><code>agent_selection.txt</code>: Agent 选择提示词，用于指导 DirectorCore 选择合适的 Agent 来执行任务。</li>
+<li><code>task_graph_generation.txt</code>: 任务图生成提示词，用于指导 DirectorCore 生成初始任务图。</li>
+<li><code>task_graph_update.txt</code>: 任务图更新提示词，用于指导 DirectorCore 在任务执行过程中更新任务图。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>configs/director/llm_settings.yaml</code> (DirectorCore LLM 输出约束)</strong></p>
+<ul>
+<li><strong>用途:</strong> 定义用于约束 DirectorCore 中 LLM 输出的正则表达式。</li>
+<li><strong>示例配置项:</strong>
+<ul>
+<li><code>output_regex</code>:
+<ul>
+<li><code>task_decomposition</code>: [正则表达式]，用于约束任务分解的 LLM 输出。</li>
+<li><code>agent_selection</code>: [正则表达式]，用于约束 Agent 选择的 LLM 输出。</li>
+<li><code>task_graph_generation</code>: [正则表达式]，用于约束任务图生成的 LLM 输出。</li>
+<li><code>task_graph_update</code>: [正则表达式]，用于约束任务图更新的 LLM 输出。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>configs/agent/config.yaml</code> (AgentNode 通用配置)</strong></p>
+<ul>
+<li><strong>用途:</strong> 存放 AgentNode 的通用配置项，例如 NetProtocol 相关配置。</li>
+<li><strong>示例配置项:</strong>
+<ul>
+<li><code>netprotocol</code>:
+<ul>
+<li><code>message_broker</code>: 消息代理类型 (例如 redis)。</li>
+<li><code>broker_address</code>: 消息代理地址。</li>
+<li><code>serializer_type</code>: 序列化器类型 (例如 avro)。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>configs/agent/prompts/</code> (AgentNode 提示词模板)</strong></p>
+<ul>
+<li><strong>用途:</strong> 存放 AgentNode 中各 Agent 子角色使用的提示词模板。</li>
+<li><strong>示例文件:</strong>
+<ul>
+<li><code>expert_agent_prompt.txt</code>: ExpertAgent 提示词，用于指导 ExpertAgent 处理特定领域的任务。</li>
+<li><code>critic_agent_prompt.txt</code>: CriticAgent 提示词，用于指导 CriticAgent 评估其他 Agent 的结果。</li>
+<li><code>executor_agent_prompt.txt</code>: ExecutorAgent 提示词，用于指导 ExecutorAgent 执行具体的操作。</li>
+<li><strong><code>browser_agent_prompt.txt</code>: BrowserAgent 提示词，用于指导 BrowserAgent 执行浏览器操作。</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>configs/agent/llm_settings.yaml</code> (AgentNode LLM 输出约束)</strong></p>
+<ul>
+<li><strong>用途:</strong> 定义用于约束 AgentNode 中 LLM 输出的正则表达式。</li>
+<li><strong>示例配置项:</strong>
+<ul>
+<li><code>output_regex</code>:
+<ul>
+<li><code>expert_agent</code>: [正则表达式]，用于约束 ExpertAgent 的 LLM 输出。</li>
+<li><code>critic_agent</code>: [正则表达式]，用于约束 CriticAgent 的 LLM 输出。</li>
+<li><code>executor_agent</code>: [正则表达式]，用于约束 ExecutorAgent 的 LLM 输出。</li>
+<li><strong>（BrowserAgent 不需要 LLM，此配置可忽略）</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>configs/llm_gateway_config.yaml</code> (全局 LLM Gateway 配置)</strong></p>
+<ul>
+<li><strong>用途:</strong> 配置 LLM 提供商、模型名称、API 密钥等，并可以针对 DirectorCore 和 AgentNode 分别配置。</li>
+<li><strong>配置优先级:</strong>
+<ul>
+<li>优先读取 <code>director</code> 或 <code>agent</code> 部分的配置（如果存在）。</li>
+<li>如果 <code>director</code> 或 <code>agent</code> 部分未配置特定项，则使用 <code>default</code> 部分的全局默认配置。</li>
+</ul>
+</li>
+<li><strong>示例配置项:</strong></li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全局默认配置</span></span><br><span class="line"><span class="attr">default:</span></span><br><span class="line">  <span class="attr">provider:</span> <span class="string">openai</span></span><br><span class="line">  <span class="attr">model_name:</span> <span class="string">gpt-3.5-turbo</span></span><br><span class="line">  <span class="attr">api_key:</span> <span class="string">YOUR_API_KEY</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># DirectorCore 特定配置（可选）</span></span><br><span class="line"><span class="attr">director:</span></span><br><span class="line">  <span class="attr">provider:</span> <span class="string">huggingface</span>  <span class="comment"># 覆盖全局默认配置</span></span><br><span class="line">  <span class="attr">model_name:</span> <span class="string">...</span></span><br><span class="line">  <span class="attr">api_key:</span> <span class="string">...</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># AgentNode 特定配置（可选）</span></span><br><span class="line"><span class="attr">agent:</span></span><br><span class="line">  <span class="attr">provider:</span> <span class="string">...</span></span><br><span class="line">  <span class="attr">model_name:</span> <span class="string">...</span></span><br><span class="line">  <span class="attr">api_key:</span> <span class="string">...</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong><code>configs/storage_config.yaml</code> (MindStorage 配置)</strong></p>
+<ul>
+<li><strong>用途:</strong> 配置 MindStorage 的行为，例如存储类型、连接参数等。</li>
+<li><strong>示例配置项:</strong>
+<ul>
+<li><code>storage_type</code>: 存储类型 (例如 in-memory)。</li>
+<li><code>redis</code>:  # Redis 存储配置 (如果 storage_type 为 redis)
+<ul>
+<li><code>host</code>: Redis 服务器地址。</li>
+<li><code>port</code>: Redis 服务器端口。</li>
+<li><code>db</code>: Redis 数据库编号。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>configs/permissions.yaml</code> (权限控制矩阵)</strong></p>
+<ul>
+<li><strong>用途:</strong> 定义角色和权限，控制 DirectorCore 和 AgentNode 内部不同角色 (例如 ExpertAgent、CriticAgent、ExecutorAgent、<strong>BrowserAgent</strong>) 之间的访问权限。</li>
+<li><strong>示例配置项:</strong>
+<ul>
+<li><code>roles</code>: 定义角色，例如 ExpertAgent、CriticAgent、ExecutorAgent、<strong>BrowserAgent</strong>。</li>
+<li><code>permissions</code>: 定义每个角色的权限，例如 <code>mindstorage:read</code>、<code>mindstorage:write</code>、<code>llm:query</code>、<strong><code>browser:control</code></strong>，其中 <code>browser:control</code> 权限控制 BrowserAgent 的浏览器操作权限。</li>
+<li><code>matrix</code>: 定义角色和权限的对应关系，例如：<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">matrix:</span></span><br><span class="line">  <span class="attr">expert_agent:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mindstorage:read</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">llm:query</span></span><br><span class="line">  <span class="attr">browser_agent:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mindstorage:read</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mindstorage:write</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">browser:control</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="五、核心工作流程及架构图">五、核心工作流程及架构图</h4>
+<pre class="mermaid">graph TD
+    A[用户终端] --> B{API Gateway}
+    B -->|NetProtocol| C[DirectorCore]
+    C -->|TaskRequest| D[AgentNode-Expert/Critic/Executor]
+    C -->|TaskRequest| H[AgentNode-BrowserAgent]
+    D -->|TaskResult| C
+    H -->|TaskResult| C
+    C <-->|读写变量| E[MindStorage]
+    D <-->|读写变量| E[MindStorage]
+    H <-->|读写变量| E[MindStorage]
+    D -->|请求| F[LLM服务]
+    H -->|请求| I[浏览器交互工具]
+    I -->|控制| J[浏览器]
+    C -->|请求| F[LLM服务]
+    C -->|监控数据| G[MindMonitor]
+    D -->|监控数据| G[MindMonitor]
+    H -->|监控数据| G[MindMonitor]
+    G <-->|任务图| C</pre>
+<ol>
+<li>
+<p><strong>任务提交</strong>:</p>
+<pre class="mermaid">    sequenceDiagram
+    User->>API_Gateway: 提交问题
+    API_Gateway->>DirectorCore: 生成MindTask
+    DirectorCore->>MindStorage: 存储初始变量
+    DirectorCore->>LLM服务: 请求生成初始任务图
+    LLM服务->>DirectorCore: 返回初始任务图
+    DirectorCore->>MindMonitor: 更新任务图</pre>
+</li>
+<li>
+<p><strong>任务调度与 Agent 选择</strong>:<br>
+DirectorCore 根据任务图依赖关系、优先级和任务类型，选择合适的 Agent（包括 <code>BrowserAgent</code>），并将任务、Agent 类型和相关变量分发给 AgentNode。Agent 选择过程可以由 LLM 驱动，也可以使用启发式规则。</p>
+</li>
+<li>
+<p><strong>任务执行</strong>:</p>
+<pre class="mermaid">    sequenceDiagram
+    DirectorCore->>AgentNode-Expert/Critic/Executor: TaskRequest(含任务描述、Agent类型、变量)
+    AgentNode-Expert/Critic/Executor->>LLM服务: 发送渲染后的提示词(含变量)
+    LLM服务->>AgentNode-Expert/Critic/Executor: 返回原始响应
+    AgentNode-Expert/Critic/Executor->>NeuroParser: 解析结构化数据
+    AgentNode-Expert/Critic/Executor->>MindStorage: 存储处理结果(含新变量)
+    AgentNode-Expert/Critic/Executor->>DirectorCore: TaskResult(含新变量)
+<pre><code>DirectorCore-&gt;&gt;AgentNode-BrowserAgent: TaskRequest(含任务描述、Agent类型、变量)
+AgentNode-BrowserAgent-&gt;&gt;浏览器交互工具: 调用API执行浏览器操作
+浏览器交互工具-&gt;&gt;AgentNode-BrowserAgent: 返回操作结果
+AgentNode-BrowserAgent-&gt;&gt;MindStorage: 存储处理结果(含新变量)
+AgentNode-BrowserAgent-&gt;&gt;DirectorCore: TaskResult(含新变量)&lt;/pre&gt;
+</code></pre>
+</li>
+<li>
+<p><strong>任务图更新/执行</strong>:</p>
+<pre class="mermaid">    sequenceDiagram
+    DirectorCore->>LLM服务: 请求评估是否需要更新任务图
+    LLM服务->>DirectorCore: 返回评估结果(更新/不更新)
+    alt 需要更新任务图
+        DirectorCore->>LLM服务: 请求生成新任务图
+        LLM服务->>DirectorCore: 返回新任务图
+        DirectorCore->>MindMonitor: 更新任务图
+    else 不需要更新任务图
+        DirectorCore->>AgentNode-Expert/Critic/Executor: 继续执行现有任务图中的任务
+        DirectorCore->>AgentNode-BrowserAgent: 继续执行现有任务图中的任务
+    end</pre>
+</li>
+<li>
+<p><strong>上下文更新</strong>:<br>
+由于DirectorCore 和 AgentNode是直接引用MindStorage中的变量，因此不需要单独的&quot;上下文更新步骤&quot;，DirectorCore可以实时感知变量变化。</p>
+</li>
+</ol>
+<hr>
+<h4 id="六、部署架构">六、部署架构</h4>
+<p>MindHub 初期采用单实例部署架构，简化部署流程。</p>
+<ul>
+<li><strong>DirectorCore:</strong> 单个实例运行。</li>
+<li><strong>AgentNode:</strong> 单个实例运行。</li>
+<li><strong>MindStorage:</strong> 使用内存存储。</li>
+<li><strong>LLM 服务:</strong> 根据实际需求选择合适的部署方式。</li>
+<li><strong>浏览器交互工具:</strong> 与 AgentNode 部署在同一实例中。</li>
+<li><strong>API Gateway:</strong> 可以使用 Nginx、Kong 或 Envoy 等成熟的 API 网关。</li>
+</ul>
+<hr>
+<h4 id="七、安全增强">七、安全增强</h4>
+<ol>
+<li><strong>权限控制</strong>:
+<ul>
+<li>通过 <code>configs/permissions.yaml</code> 文件定义角色和权限，控制 DirectorCore 与 AgentNode 内部不同角色之间的访问权限。</li>
+<li>特别注意限制 <code>BrowserAgent</code> 的权限, 例如禁止访问特定域名、限制可执行的浏览器操作等。</li>
+</ul>
+</li>
+<li><strong>安全沙箱</strong> (可选):
+<ul>
+<li>考虑使用安全沙箱隔离 <code>BrowserAgent</code>，防止其访问系统敏感资源。可以使用 Docker 容器或其他虚拟化技术。</li>
+</ul>
+</li>
+<li><strong>输入验证</strong>:
+<ul>
+<li>对用户输入进行严格的验证，防止恶意代码注入，特别是用于 <code>BrowserAgent</code> 的任务描述。</li>
+</ul>
+</li>
+<li><strong>访问控制</strong>:
+<ul>
+<li>限制 DirectorCore 和 AgentNode 对 MindStorage 的访问权限，只允许必要的读写操作。</li>
+</ul>
+</li>
+<li><strong>数据加密</strong>:
+<ul>
+<li>对 MindStorage 中存储的敏感数据进行加密。</li>
+</ul>
+</li>
+<li><strong>日志审计</strong>:
+<ul>
+<li>记录所有操作日志，方便问题排查和安全审计。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="八、可选功能">八、可选功能</h4>
+<ol>
+<li>
+<p><strong>上下文压缩 (Context Compressor):</strong></p>
+<ul>
+<li><strong>目的:</strong> 减少 LLM 的输入长度，提高效率和降低成本。</li>
+<li><strong>实现:</strong> 在 DirectorCore 中，使用上下文压缩算法 (例如 TextRank、LSA) 对任务上下文进行压缩。</li>
+<li><strong>配置:</strong> 通过 <code>configs/director/config.yaml</code> 中的 <code>context_compressor</code> 参数进行配置。</li>
+<li><strong>算法选择:</strong> 可以选择不同的上下文压缩算法，例如 TextRank、LSA、TF-IDF 等。</li>
+<li><strong>压缩比例:</strong> 可以配置上下文压缩的比例，控制压缩后的上下文长度。</li>
+</ul>
+</li>
+<li>
+<p><strong>Redis 存储 (Redis Storage):</strong></p>
+<ul>
+<li><strong>目的:</strong> 提供持久化存储，支持更大规模的数据和更高的可靠性。</li>
+<li><strong>实现:</strong> 通过 <code>mindstorage/redis_storage.py</code> 实现。</li>
+<li><strong>配置:</strong> 通过 <code>configs/storage_config.yaml</code> 配置 <code>storage_type</code> 为 <code>redis</code>，并提供 Redis 连接参数。</li>
+<li><strong>数据备份:</strong> 定期备份 Redis 数据，防止数据丢失。</li>
+<li><strong>集群部署:</strong> 采用 Redis 集群部署，提高系统的可用性和扩展性。</li>
+</ul>
+</li>
+<li>
+<p><strong>快照与回滚:</strong></p>
+<ul>
+<li><strong>目的:</strong> 提供系统容错能力，支持回滚到之前的状态。</li>
+<li><strong>实现:</strong> 在 DirectorCore 中实现快照机制，定期保存任务图、变量和内部状态。当发生错误时，可以选择一个快照进行回滚。</li>
+<li><strong>配置:</strong> 通过 <code>configs/director/config.yaml</code> 中的 <code>snapshot</code> 参数进行配置，例如快照频率、存储位置和保留策略。</li>
+<li><strong>快照存储:</strong> 将快照存储到可靠的存储介质中，例如云存储、分布式文件系统等。</li>
+<li><strong>回滚策略:</strong> 定义回滚策略，例如自动回滚、手动回滚等。</li>
+</ul>
+</li>
+</ol>
+<hr>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="../../../../index.html">首页</a></li>
+        
+          <li><a href="../../../../about/">关于</a></li>
+        
+          <li><a href="../../../../archives/">归档</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E8%BF%91%E6%9C%9F%EF%BC%8C%E6%88%91%E7%95%85%E6%83%B3%EF%BC%8C%E5%B8%8C%E6%9C%9B%E8%83%BD%E5%A4%9F%E5%BC%80%E5%8F%91%E4%B8%80%E6%AC%BE%E7%9C%9F%E6%AD%A3%E9%80%9A%E7%94%A8%E5%9E%8Bagent%EF%BC%8C%E4%BD%86%E6%98%AF%E7%94%B1%E4%BA%8E%E6%B2%A1%E6%9C%89%E5%85%85%E5%88%86%E7%9A%84%E5%BC%80%E5%8F%91%E6%97%B6%E9%97%B4%E4%BB%A5%E5%8F%8A%E8%BF%99%E4%B8%AAagent%E5%BC%80%E5%8F%91%E8%B5%B7%E6%9D%A5%E6%98%AF%E6%9C%89%E4%B8%80%E5%AE%9A%E9%9A%BE%E5%BA%A6%E7%9A%84%EF%BC%8C%E6%88%91%E7%8E%B0%E5%9C%A8%E5%85%88%E6%8A%8A%E6%88%91%E6%95%B4%E7%90%86%E7%9A%84%E6%9C%89%E5%85%B3%E8%BF%99%E4%B8%AAagent%E7%9A%84%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E5%86%99%E5%9C%A8%E6%9C%AC%E7%AF%87%E5%8D%9A%E5%AE%A2%E4%B8%AD%EF%BC%8C%E4%BB%A5%E5%BE%85%E5%90%8E%E7%BB%AD%E5%BC%80%E5%8F%91%E3%80%82"><span class="toc-number">1.</span> <span class="toc-text">在近期，我畅想，希望能够开发一款真正通用型agent，但是由于没有充分的开发时间以及这个agent开发起来是有一定难度的，我现在先把我整理的有关这个agent的架构设计写在本篇博客中，以待后续开发。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MindHub-%E5%B7%A5%E7%A8%8B%E5%8C%96%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">MindHub 工程化实现方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">一、项目文件结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E5%8F%8A%E9%80%BB%E8%BE%91"><span class="toc-number">2.2.</span> <span class="toc-text">二、核心组件及逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81DirectorCore-%E4%B8%8E-AgentNode-%E9%80%9A%E4%BF%A1%E6%9C%BA%E5%88%B6"><span class="toc-number">2.3.</span> <span class="toc-text">三、DirectorCore 与 AgentNode 通信机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3"><span class="toc-number">2.4.</span> <span class="toc-text">四、配置文件详解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E6%A0%B8%E5%BF%83%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-number">2.5.</span> <span class="toc-text">五、核心工作流程及架构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%9E%84"><span class="toc-number">2.6.</span> <span class="toc-text">六、部署架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%AE%89%E5%85%A8%E5%A2%9E%E5%BC%BA"><span class="toc-number">2.7.</span> <span class="toc-text">七、安全增强</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E5%8F%AF%E9%80%89%E5%8A%9F%E8%83%BD"><span class="toc-number">2.8.</span> <span class="toc-text">八、可选功能</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&text=关于一个通用agent-Mindhub的构思"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&is_video=false&description=关于一个通用agent-Mindhub的构思"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=关于一个通用agent-Mindhub的构思&body=Check out this article: https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&title=关于一个通用agent-Mindhub的构思"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&name=关于一个通用agent-Mindhub的构思&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2025/01/17/%E5%85%B3%E4%BA%8E%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8agent-Mindhub%E7%9A%84%E6%9E%84%E6%80%9D/&t=关于一个通用agent-Mindhub的构思"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2025
+    leezhuuuuu
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="../../../../index.html">首页</a></li><!--
+     --><!--
+       --><li><a href="../../../../about/">关于</a></li><!--
+     --><!--
+       --><li><a href="../../../../archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="../../../../js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

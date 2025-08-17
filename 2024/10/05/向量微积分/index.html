@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"leezhuuuuu.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
     <meta name="description" content="基础定义   梯度（Gradient） 对于标量函数 ϕ(x,y,z)\phi(x,y,z)ϕ(x,y,z)： ∇ϕ&#x3D;(∂ϕ∂x,∂ϕ∂y,∂ϕ∂z)\nabla \phi &#x3D; \left( \frac{\partial \phi}{\partial x}, \frac{\partial \phi}{\partial y}, \frac{\partial \phi}{\partial z} \r">
 <meta property="og:type" content="article">
 <meta property="og:title" content="向量微积分">
@@ -19,154 +33,220 @@
 <meta property="article:tag" content="知识点">
 <meta property="article:tag" content="数学">
 <meta name="twitter:card" content="summary">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/178091611?v=4">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/178091611?v=4" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="https://avatars.githubusercontent.com/u/178091611?v=4">
-        
-      
-    
-    <!-- title -->
-    <title>向量微积分</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="../../../../css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/","path":"2024/10/05/向量微积分/","title":"向量微积分"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="../../../../index.html">首页</a></li><!--
-     --><!--
-       --><li><a href="../../../../about/">关于</a></li><!--
-     --><!--
-       --><li><a href="../../../../archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/leezhuuuuu">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="../../07/NT-STATUS-OBJECT-NAME-NOT-FOUND/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="../../../../2023/12/18/%E3%80%8A%E7%94%B5%E7%A3%81%E5%9C%BA%E7%90%86%E8%AE%BA%E3%80%8B%E5%A4%8D%E4%B9%A0%E8%A6%81%E7%82%B9%E4%B8%8E%E9%98%B6%E6%AE%B5%E5%88%92%E5%88%86/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&text=向量微积分"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&is_video=false&description=向量微积分"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=向量微积分&body=Check out this article: https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&name=向量微积分&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&t=向量微积分"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">基础定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E8%BF%90%E7%AE%97%E6%B3%95%E5%88%99"><span class="toc-number">2.</span> <span class="toc-text">混合运算法则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%E5%86%85%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">补充内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%92%E7%BA%B3%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">归纳总结</span></a></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        向量微积分
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">leezhuuuuu</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-10-05T15:09:01.000Z" class="dt-published" itemprop="datePublished">2024-10-05</time>
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="../../../../categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/">知识点学习</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="../../../../tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a>, <a class="p-category" href="../../../../tags/%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="tag">知识点</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>向量微积分 | leezhuuuuu's blog</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <hr>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">leezhuuuuu's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">基础定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E8%BF%90%E7%AE%97%E6%B3%95%E5%88%99"><span class="nav-number">2.</span> <span class="nav-text">混合运算法则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%E5%86%85%E5%AE%B9"><span class="nav-number">3.</span> <span class="nav-text">补充内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%92%E7%BA%B3%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">归纳总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="leezhuuuuu"
+      src="https://avatars.githubusercontent.com/u/178091611?v=4">
+  <p class="site-author-name" itemprop="name">leezhuuuuu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leezhuuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leezhuuuuu" rel="noopener me" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:me@leezhu.cn" title="E-Mail → mailto:me@leezhu.cn" rel="noopener me" target="_blank">E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/178091611?v=4">
+      <meta itemprop="name" content="leezhuuuuu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="leezhuuuuu's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="向量微积分 | leezhuuuuu's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          向量微积分
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-05 23:09:01" itemprop="dateCreated datePublished" datetime="2024-10-05T23:09:01+08:00">2024-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-15 11:36:07" itemprop="dateModified" datetime="2025-04-15T11:36:07+08:00">2025-04-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">知识点学习</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><hr>
 <h3 id="基础定义">基础定义</h3>
 <ol>
 <li>
@@ -361,143 +441,76 @@
 <p>这些运算是向量微积分中的核心，在电磁学、流体力学和各种物理场分析中有广泛的应用。理解和掌握这些公式对解决复杂的向量场问题非常有帮助。</p>
 <hr>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="../../../../index.html">首页</a></li>
-        
-          <li><a href="../../../../about/">关于</a></li>
-        
-          <li><a href="../../../../archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/leezhuuuuu">项目</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">基础定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E8%BF%90%E7%AE%97%E6%B3%95%E5%88%99"><span class="toc-number">2.</span> <span class="toc-text">混合运算法则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%E5%86%85%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">补充内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%92%E7%BA%B3%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">归纳总结</span></a></li></ol>
-      </div>
     
 
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&text=向量微积分"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&is_video=false&description=向量微积分"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=向量微积分&body=Check out this article: https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&title=向量微积分"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&name=向量微积分&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/05/%E5%90%91%E9%87%8F%E5%BE%AE%E7%A7%AF%E5%88%86/&t=向量微积分"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="tag"># 知识点</a>
+              <a href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag"># 数学</a>
+          </div>
 
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
         
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
 
-  </div>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/12/18/%E3%80%8A%E7%94%B5%E7%A3%81%E5%9C%BA%E7%90%86%E8%AE%BA%E3%80%8B%E5%A4%8D%E4%B9%A0%E8%A6%81%E7%82%B9%E4%B8%8E%E9%98%B6%E6%AE%B5%E5%88%92%E5%88%86/" rel="prev" title="《电磁场理论》复习要点与阶段划分">
+                  <i class="fa fa-angle-left"></i> 《电磁场理论》复习要点与阶段划分
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/" rel="next" title="解决 net rpc shutdown 报错 &quot;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&quot;">
+                  解决 net rpc shutdown 报错 "Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND" <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2016-2025
-    leezhuuuuu
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">leezhuuuuu</span>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="../../../../index.html">首页</a></li><!--
-     --><!--
-       --><li><a href="../../../../about/">关于</a></li><!--
-     --><!--
-       --><li><a href="../../../../archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/leezhuuuuu">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
-</footer>
 
     </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-
-<script src="../../../../js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>

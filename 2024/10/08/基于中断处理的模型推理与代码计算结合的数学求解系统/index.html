@@ -1,11 +1,25 @@
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN">
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"leezhuuuuu.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
     <meta name="description" content="由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。 项目构建思路：基于调度员的数学问题求解系统 一、项目背景和目标 该项目旨在构建一个智能系统，用于解决复杂的数学问题。系统利用 OpenAI 大模型生成带有变量的数学公式，并结合编程和数值计算模块进行求解。为了适应多步骤问题和复杂的求解场景，引入一个 调度员（Scheduler），负责动态判断问题状态，并在不">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于中断处理的模型推理与代码计算结合的数学求解系统">
@@ -19,154 +33,228 @@
 <meta property="article:tag" content="经验技术">
 <meta property="article:tag" content="NLP">
 <meta name="twitter:card" content="summary">
-    
-    
-      
-        
-          <link rel="shortcut icon" href="https://avatars.githubusercontent.com/u/178091611?v=4">
-        
-      
-      
-        
-          <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/178091611?v=4" sizes="192x192">
-        
-      
-      
-        
-          <link rel="apple-touch-icon" sizes="180x180" href="https://avatars.githubusercontent.com/u/178091611?v=4">
-        
-      
-    
-    <!-- title -->
-    <title>基于中断处理的模型推理与代码计算结合的数学求解系统</title>
-    <!-- async scripts -->
-    <!-- Google Analytics -->
 
 
-    <!-- Umami Analytics -->
+<link rel="canonical" href="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/">
 
 
-    <!-- styles -->
-    
-<link rel="stylesheet" href="../../../../css/style.css">
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/","path":"2024/10/08/基于中断处理的模型推理与代码计算结合的数学求解系统/","title":"基于中断处理的模型推理与代码计算结合的数学求解系统"}</script>
 
-    <!-- persian styles -->
-    
-    <!-- rss -->
-    
-    
-	<!-- mathjax -->
-	
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-        <!--
-       --><li><a href="../../../../index.html">首页</a></li><!--
-     --><!--
-       --><li><a href="../../../../about/">关于</a></li><!--
-     --><!--
-       --><li><a href="../../../../archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/leezhuuuuu">项目</a></li><!--
-     -->
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" aria-label="上一篇" href="../%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" aria-label="下一篇" href="../../07/NT-STATUS-OBJECT-NAME-NOT-FOUND/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&text=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&is_video=false&description=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=基于中断处理的模型推理与代码计算结合的数学求解系统&body=Check out this article: https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&name=基于中断处理的模型推理与代码计算结合的数学求解系统&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&t=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">项目构建思路：基于调度员的数学问题求解系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF%E5%92%8C%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">一、项目背景和目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">二、系统架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.</span> <span class="toc-text">三、核心模块设计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%97%AE%E9%A2%98%E8%BE%93%E5%85%A5%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">1. 问题输入模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="toc-number">3.</span> <span class="toc-text">2. 问题解析模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%B0%83%E5%BA%A6%E5%91%98%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">3. 调度员模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97"><span class="toc-number">5.</span> <span class="toc-text">4. 代码生成模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9D%97"><span class="toc-number">6.</span> <span class="toc-text">5. 计算模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%95%B4%E5%90%88%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9D%97"><span class="toc-number">7.</span> <span class="toc-text">6. 整合输出模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">7.1.</span> <span class="toc-text">四、系统流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-number">7.2.</span> <span class="toc-text">五、关键技术栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E9%A1%B9%E7%9B%AE%E8%BF%AD%E4%BB%A3%E8%AE%A1%E5%88%92"><span class="toc-number">7.3.</span> <span class="toc-text">六、项目迭代计划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">7.4.</span> <span class="toc-text">七、总结</span></a></li></ol></li></ol>
-      </div>
-    
-  </span>
-</div>
-
-    
-    <div class="content index py4 ">
-        
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle p-name" itemprop="name headline">
-        基于中断处理的模型推理与代码计算结合的数学求解系统
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span class="p-name" itemprop="name">leezhuuuuu</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2024-10-08T04:39:28.000Z" class="dt-published" itemprop="datePublished">2024-10-08</time>
-        
-      
-    </div>
-
-
-      
-    <div class="article-category">
-        <i class="fa-solid fa-archive"></i>
-        <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/">经验技术分享</a> › <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/">学术</a> › <a class="category-link" href="../../../../categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/">NLP</a>
-    </div>
-
-
-      
-    <div class="article-tag">
-        <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="../../../../tags/NLP/" rel="tag">NLP</a>, <a class="p-category" href="../../../../tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/" rel="tag">经验技术</a>
-    </div>
-
-
-    </div>
-  </header>
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基于中断处理的模型推理与代码计算结合的数学求解系统 | leezhuuuuu's blog</title>
   
 
-  <div class="content e-content" itemprop="articleBody">
-    <p>由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。</p>
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">leezhuuuuu's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">项目构建思路：基于调度员的数学问题求解系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF%E5%92%8C%E7%9B%AE%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">一、项目背景和目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">二、系统架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.3.</span> <span class="nav-text">三、核心模块设计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%97%AE%E9%A2%98%E8%BE%93%E5%85%A5%E6%A8%A1%E5%9D%97"><span class="nav-number">2.</span> <span class="nav-text">1. 问题输入模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="nav-number">3.</span> <span class="nav-text">2. 问题解析模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%B0%83%E5%BA%A6%E5%91%98%E6%A8%A1%E5%9D%97"><span class="nav-number">4.</span> <span class="nav-text">3. 调度员模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97"><span class="nav-number">5.</span> <span class="nav-text">4. 代码生成模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9D%97"><span class="nav-number">6.</span> <span class="nav-text">5. 计算模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%95%B4%E5%90%88%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9D%97"><span class="nav-number">7.</span> <span class="nav-text">6. 整合输出模块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">7.1.</span> <span class="nav-text">四、系统流程图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="nav-number">7.2.</span> <span class="nav-text">五、关键技术栈</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E9%A1%B9%E7%9B%AE%E8%BF%AD%E4%BB%A3%E8%AE%A1%E5%88%92"><span class="nav-number">7.3.</span> <span class="nav-text">六、项目迭代计划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">7.4.</span> <span class="nav-text">七、总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="leezhuuuuu"
+      src="https://avatars.githubusercontent.com/u/178091611?v=4">
+  <p class="site-author-name" itemprop="name">leezhuuuuu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/leezhuuuuu" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;leezhuuuuu" rel="noopener me" target="_blank">GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:me@leezhu.cn" title="E-Mail → mailto:me@leezhu.cn" rel="noopener me" target="_blank">E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/178091611?v=4">
+      <meta itemprop="name" content="leezhuuuuu">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="leezhuuuuu's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基于中断处理的模型推理与代码计算结合的数学求解系统 | leezhuuuuu's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于中断处理的模型推理与代码计算结合的数学求解系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-08 12:39:28" itemprop="dateCreated datePublished" datetime="2024-10-08T12:39:28+08:00">2024-10-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-15 11:36:07" itemprop="dateModified" datetime="2025-04-15T11:36:07+08:00">2025-04-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">经验技术分享</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">学术</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/%E5%AD%A6%E6%9C%AF/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>由 Gemini 1.5 Pro 002 、claude-3.5-sonnet 协助生成。</p>
 <h3 id="项目构建思路：基于调度员的数学问题求解系统">项目构建思路：基于调度员的数学问题求解系统</h3>
 <h4 id="一、项目背景和目标">一、项目背景和目标</h4>
 <p>该项目旨在构建一个智能系统，用于解决复杂的数学问题。系统利用 OpenAI 大模型生成带有变量的数学公式，并结合编程和数值计算模块进行求解。为了适应多步骤问题和复杂的求解场景，引入一个 <strong>调度员（Scheduler）</strong>，负责动态判断问题状态，并在不同模块之间调度以保证问题得到完整解答。</p>
@@ -329,143 +417,76 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">�
 <h4 id="七、总结">七、总结</h4>
 <p>该项目的目标是构建一个模块化、可扩展的数学问题求解系统。通过引入调度员模块，系统能够动态地处理复杂问题，确保问题得到多次迭代和调整，最终输出一个完整的解答。</p>
 
-  </div>
-</article>
-
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-        
-          <li><a href="../../../../index.html">首页</a></li>
-        
-          <li><a href="../../../../about/">关于</a></li>
-        
-          <li><a href="../../../../archives/">归档</a></li>
-        
-          <li><a target="_blank" rel="noopener" href="https://github.com/leezhuuuuu">项目</a></li>
-        
-      </ul>
     </div>
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%9E%84%E5%BB%BA%E6%80%9D%E8%B7%AF%EF%BC%9A%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">项目构建思路：基于调度员的数学问题求解系统</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E9%A1%B9%E7%9B%AE%E8%83%8C%E6%99%AF%E5%92%8C%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">一、项目背景和目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">二、系统架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.3.</span> <span class="toc-text">三、核心模块设计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%97%AE%E9%A2%98%E8%BE%93%E5%85%A5%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">1. 问题输入模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90%E6%A8%A1%E5%9D%97"><span class="toc-number">3.</span> <span class="toc-text">2. 问题解析模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%B0%83%E5%BA%A6%E5%91%98%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">3. 调度员模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%A8%A1%E5%9D%97"><span class="toc-number">5.</span> <span class="toc-text">4. 代码生成模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9D%97"><span class="toc-number">6.</span> <span class="toc-text">5. 计算模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%95%B4%E5%90%88%E8%BE%93%E5%87%BA%E6%A8%A1%E5%9D%97"><span class="toc-number">7.</span> <span class="toc-text">6. 整合输出模块</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-number">7.1.</span> <span class="toc-text">四、系统流程图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E6%A0%88"><span class="toc-number">7.2.</span> <span class="toc-text">五、关键技术栈</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E9%A1%B9%E7%9B%AE%E8%BF%AD%E4%BB%A3%E8%AE%A1%E5%88%92"><span class="toc-number">7.3.</span> <span class="toc-text">六、项目迭代计划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">7.4.</span> <span class="toc-text">七、总结</span></a></li></ol></li></ol>
-      </div>
     
 
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&text=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&is_video=false&description=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=基于中断处理的模型推理与代码计算结合的数学求解系统&body=Check out this article: https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&title=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&name=基于中断处理的模型推理与代码计算结合的数学求解系统&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://leezhuuuuu.github.io/2024/10/08/%E5%9F%BA%E4%BA%8E%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86%E7%9A%84%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E4%B8%8E%E4%BB%A3%E7%A0%81%E8%AE%A1%E7%AE%97%E7%BB%93%E5%90%88%E7%9A%84%E6%95%B0%E5%AD%A6%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/&t=基于中断处理的模型推理与代码计算结合的数学求解系统"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BB%8F%E9%AA%8C%E6%8A%80%E6%9C%AF/" rel="tag"># 经验技术</a>
+              <a href="/tags/NLP/" rel="tag"># NLP</a>
+          </div>
 
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
         
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
 
-  </div>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/07/NT-STATUS-OBJECT-NAME-NOT-FOUND/" rel="prev" title="解决 net rpc shutdown 报错 &quot;Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND&quot;">
+                  <i class="fa fa-angle-left"></i> 解决 net rpc shutdown 报错 "Could not initialise pipe winreg. Error was NT_STATUS_OBJECT_NAME_NOT_FOUND"
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/08/%E5%9F%BA%E4%BA%8E%E8%B0%83%E5%BA%A6%E5%91%98%E7%9A%84%E6%95%B0%E5%AD%A6%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E7%B3%BB%E7%BB%9F/" rel="next" title="基于调度员的数学问题求解系统">
+                  基于调度员的数学问题求解系统 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
-    
-    
-    2016-2025
-    leezhuuuuu
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">leezhuuuuu</span>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-        <!--
-       --><li><a href="../../../../index.html">首页</a></li><!--
-     --><!--
-       --><li><a href="../../../../about/">关于</a></li><!--
-     --><!--
-       --><li><a href="../../../../archives/">归档</a></li><!--
-     --><!--
-       --><li><a target="_blank" rel="noopener" href="https://github.com/leezhuuuuu">项目</a></li><!--
-     -->
-      </ul>
-    </nav>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
-</footer>
 
     </div>
-    <!-- styles -->
-
-
-
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
-
-
-    <!-- jquery -->
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
-
-
-
-
-<!-- clipboard -->
+  </footer>
 
   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
-  
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
-    btn += '<i class="fa-regular fa-clone"></i>';
-    btn += '</span>';
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
-      }
-    });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功！");
-      e.clearSelection();
-    })
-  })
-  </script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-
-<script src="../../../../js/main.js"></script>
-
-<!-- search -->
-
-<!-- Baidu Analytics -->
-
-<!-- Cloudflare Analytics -->
-
-<!-- Disqus Comments -->
-
-<!-- utterances Comments -->
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
 </body>
 </html>
